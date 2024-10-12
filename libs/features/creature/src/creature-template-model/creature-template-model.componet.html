@@ -1,0 +1,100 @@
+<keira-top-bar [selected]="handlerService.selected" [selectedName]="handlerService.selectedName" [isNew]="handlerService.isNew" />
+
+<div class="container-fluid editor-with-preview" [class.show-preview]="showItemPreview">
+  @if (editorService.loading) {
+    <span [translate]="'LOADING'"></span>
+  }
+
+  @if (editorService.form && !!editorService.loadedEntityId && !editorService.loading) {
+    <div>
+      <div class="content-block">
+        <keira-query-output [docUrl]="docUrl" [editorService]="editorService" (executeQuery)="save($event)" />
+      </div>
+      <form [formGroup]="editorService.form" class="form-group edit-form">
+        <div class="content-block">
+          <span class="category-title" [translate]="'CREATURE.TEMPLATE.BASE'"></span>
+          <div class="row">
+            <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+              <label class="control-label" for="CreatureID">CreatureID</label>
+              <i class="fas fa-info-circle ms-1" placement="auto" [tooltip]="'UNIQUE_ID' | translate: { ENTITY: 'creature' }"></i>
+              <input [formControlName]="'CreatureID'" id="CreatureID" type="number" class="form-control form-control-sm" />
+            </div>
+            <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+              <label class="control-label" for="Idx">Idx</label>
+              <i class="fas fa-info-circle ms-1" placement="auto" [tooltip]="'UNIQUE_ID'"></i>
+              <input [formControlName]="'Idx'" id="Idx" type="number" class="form-control form-control-sm" />
+            </div>
+            <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                <label class="control-label" for="CreatureDisplayID">CreatureDisplayID</label>
+                <input [formControlName]="'CreatureDisplayID'" id="CreatureDisplayID" type="number" class="form-control form-control-sm" />
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                <label class="control-label" for="DisplayScale">DisplayScale</label>
+                <input [formControlName]="'DisplayScale'" id="DisplayScale" type="number" class="form-control form-control-sm" />
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                <label class="control-label" for="Probability">Probability</label>
+                <input [formControlName]="'Probability'" id="Probability" type="number" class="form-control form-control-sm" />
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                <label class="control-label" for="VerifiedBuild">VerifiedBuild</label>
+                <input [formControlName]="'VerifiedBuild'" id="VerifiedBuild" type="number" class="form-control form-control-sm" />
+              </div>
+            </div>
+        </form>
+
+
+        
+      <div class="preview-container" [class.show-preview]="showItemPreview" [class.hide-preview]="!showItemPreview">
+        <div class="transparent perfect-scrollbar">
+          <!-- TODO: fix and  enable these in the scope of https://github.com/azerothcore/Keira3/issues/3015-->
+          <div style="color: white; margin: 10px">
+            <p>Preview currently unavailable.</p>
+            <p>This feature will be fixed in a new Keira3 version.</p>
+          </div>
+          <!--          <div class="creature-preview">-->
+          <!--            @if (editorService.form.controls.modelid1.value) {-->
+          <!--              <keira-model-3d-viewer-->
+          <!--                [viewerType]="NPC_VIEWER_TYPE"-->
+          <!--                [displayId]="editorService.form.controls.modelid1.value"-->
+          <!--                [id]="'model3d_1'"-->
+          <!--              >-->
+          <!--                <div id="model3d_1"></div>-->
+          <!--              </keira-model-3d-viewer>-->
+          <!--            }-->
+          <!--            @if (editorService.form.controls.modelid2.value) {-->
+          <!--              <keira-model-3d-viewer-->
+          <!--                [viewerType]="NPC_VIEWER_TYPE"-->
+          <!--                [displayId]="editorService.form.controls.modelid2.value"-->
+          <!--                [id]="'model3d_2'"-->
+          <!--              >-->
+          <!--                <div id="model3d_2"></div-->
+          <!--              ></keira-model-3d-viewer>-->
+          <!--            }-->
+          <!--            @if (editorService.form.controls.modelid3.value) {-->
+          <!--              <keira-model-3d-viewer-->
+          <!--                [viewerType]="NPC_VIEWER_TYPE"-->
+          <!--                [displayId]="editorService.form.controls.modelid3.value"-->
+          <!--                [id]="'model3d_3'"-->
+          <!--              >-->
+          <!--                <div id="model3d_3"></div-->
+          <!--              ></keira-model-3d-viewer>-->
+          <!--            }-->
+          <!--            @if (editorService.form.controls.modelid4.value) {-->
+          <!--              <keira-model-3d-viewer-->
+          <!--                [viewerType]="NPC_VIEWER_TYPE"-->
+          <!--                [displayId]="editorService.form.controls.modelid4.value"-->
+          <!--                [id]="'model3d_4'"-->
+          <!--              >-->
+          <!--                <div id="model3d_4"></div-->
+          <!--              ></keira-model-3d-viewer>-->
+          <!--            }-->
+          <!--          </div>-->
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm toggle-preview-button" (click)="showItemPreview = !showItemPreview">
+        <i class="fas {{ showItemPreview ? 'fa-angle-double-right' : 'fa-angle-double-left' }}"></i>
+      </button>
+    </div>
+  }
+</div>
