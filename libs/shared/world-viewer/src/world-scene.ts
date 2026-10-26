@@ -264,16 +264,23 @@ export class WorldScene {
 
   // ---------------------------------------------------------------- picking
 
-  /** Picks at normalised device coordinates (−1..1): markers first, then the ground. */
-  pick(ndcX: number, ndcY: number): PickResult | undefined {
+  /**
+   * Picks at normalised device coordinates (−1..1): markers hit by the ray first, then the marker nearest to the
+   * cursor within `tolerance` (in NDC units, so small far-away markers stay clickable), then the ground.
+   * With `groundOnly`, markers are ignored (used when placing things on the terrain).
+   */
+  pick(ndcX: number, ndcY: number, tolerance = 0.03, groundOnly = false): PickResult | undefined {
     this.camera.updateMatrixWorld();
     this.updateMarkerScale();
     this.scene.updateMatrixWorld();
     this.raycaster.setFromCamera(new Vector2(ndcX, ndcY), this.camera);
 
-    const markerHit = this.raycaster.intersectObjects([this.spawnGroup, this.waypointGroup], true).find(isPickableHit);
-    if (markerHit) {
-      const data = markerHit.object.userData as PickableData;
+    const markerHit = groundOnly
+      ? undefined
+      : this.raycaster.intersectObjects([this.spawnGroup, this.waypointGroup], true).find(isPickableHit);
+    const marker = groundOnly ? undefined : (markerHit?.object ?? this.nearestMarker(ndcX, ndcY, tolerance));
+    if (marker) {
+      const data = marker.userData as PickableData;
       const state = this.getObjectState(data.key) as { position: WorldPosition };
       return data.kind === 'waypoint'
         ? { type: 'waypoint', key: data.key, pathKey: data.pathKey as string, point: data.point as number, position: state.position }
@@ -282,6 +289,22 @@ export class WorldScene {
 
     const groundHit = this.raycaster.intersectObject(this.terrainGroup, true)[0];
     return groundHit ? { type: 'ground', position: sceneToWorld(groundHit.point) } : undefined;
+  }
+
+  /** Marker whose on-screen position is nearest to the cursor, if within `tolerance` and in front of the camera. */
+  private nearestMarker(ndcX: number, ndcY: number, tolerance: number): Object3D | undefined {
+    let best: Object3D | undefined;
+    let bestDistance = tolerance;
+    const projected = new Vector3();
+    this.objects.forEach((object) => {
+      projected.copy(object.position).project(this.camera);
+      const distance = Math.hypot(projected.x - ndcX, projected.y - ndcY);
+      if (projected.z < 1 && distance <= bestDistance) {
+        best = object;
+        bestDistance = distance;
+      }
+    });
+    return best;
   }
 
   /** Terrain height under a server x/y, if that tile is loaded. */

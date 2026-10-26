@@ -95,6 +95,7 @@ interface FakeTransformControls extends EventDispatcher<{ 'dragging-changed': { 
       [editableKey]="editable()"
       [gizmoMode]="mode()"
       [snapToGround]="snap()"
+      [groundOnly]="groundOnly()"
       [focus]="focus()"
       (picked)="picks.push($event)"
       (objectMoved)="moves.push($event)"
@@ -110,6 +111,7 @@ class HostComponent {
   readonly editable = signal<string | undefined>(undefined);
   readonly mode = signal<GizmoMode>('translate');
   readonly snap = signal(true);
+  readonly groundOnly = signal(false);
   readonly focus = signal<WorldPosition | undefined>(undefined);
   readonly picks: PickResult[] = [];
   readonly moves: ObjectMoved[] = [];
@@ -307,6 +309,14 @@ describe(WorldViewerComponent.name, () => {
       await settle(fixture);
       page.click();
       expect(host.picks).toEqual([expect.objectContaining({ type: 'spawn', key: 'creature:7' })]);
+    });
+
+    it('reports the ground under spawns when placing', async () => {
+      const { page, host, fixture, update } = await pickSetup();
+      await settle(fixture);
+      await update(() => host.groundOnly.set(true));
+      page.click();
+      expect(host.picks[0].type).toBe('ground');
     });
 
     it('reports clicks on the ground', async () => {

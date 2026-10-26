@@ -21,6 +21,7 @@ class FakeWorldViewerComponent {
   readonly editableKey = input<string | undefined>(undefined);
   readonly gizmoMode = input<GizmoMode>('translate');
   readonly snapToGround = input<boolean>(true);
+  readonly groundOnly = input<boolean>(false);
   readonly focus = input<WorldPosition | undefined>(undefined);
   readonly picked = output<PickResult>();
   readonly objectMoved = output<ObjectMoved>();
@@ -443,6 +444,7 @@ describe(WorldEditorComponent.name, () => {
       await loadArea(page);
       page.click('tool-place-creature');
       await settle(page);
+      expect(page.viewer().groundOnly()).toBe(true);
 
       page.viewer().picked.emit({ type: 'ground', position: { x: 1, y: 2, z: 3 } });
       await settle(page);
@@ -524,6 +526,9 @@ describe(WorldEditorComponent.name, () => {
       await settle(page);
       expect(page.pendingLines()).toEqual(['Add waypoint 10 #3']);
       expect(page.viewer().paths()[0].points.length).toBe(3);
+      expect(page.text('selected-title')).toContain('point 3');
+      expect(page.placementValue('x')).toBe(1);
+      expect(page.placementValue('z')).toBe(3);
 
       page.viewer().objectMoved.emit({ key: 'path:10#3', position: { x: 4, y: 5, z: 6 }, orientation: 0 });
       await settle(page);

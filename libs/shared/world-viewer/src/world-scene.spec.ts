@@ -189,6 +189,27 @@ describe('WorldScene', () => {
       expect(result?.position.z).toBeCloseTo(50, 1);
     });
 
+    it('picks the marker nearest to the cursor when the ray just misses', () => {
+      const world = setup();
+      lookDownAt(world, at(0, 1.2));
+      expect(world.pick(0, 0, 0)?.type).toBe('ground');
+      expect(world.pick(0, 0)).toEqual(expect.objectContaining({ type: 'spawn', key: 'creature:1' }));
+    });
+
+    it('picks only the ground when asked to', () => {
+      const world = setup();
+      lookDownAt(world, at(0, 0));
+      expect(world.pick(0, 0, 0.03, true)?.type).toBe('ground');
+    });
+
+    it('ignores markers behind the camera', () => {
+      const world = setup();
+      const p = worldToScene(at(0, 0));
+      world.camera.position.set(p.x, p.y + 5, p.z - 20);
+      world.camera.lookAt(p.x, p.y + 5, p.z - 40);
+      expect(world.pick(0, 0, 2)?.type).not.toBe('spawn');
+    });
+
     it('picks nothing in the sky', () => {
       const world = setup();
       world.camera.position.set(0, 1000, 0);

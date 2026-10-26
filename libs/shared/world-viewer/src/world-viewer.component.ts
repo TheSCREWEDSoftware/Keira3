@@ -55,6 +55,8 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
   readonly editableKey = input<string | undefined>(undefined);
   readonly gizmoMode = input<GizmoMode>('translate');
   readonly snapToGround = input<boolean>(true);
+  /** Clicks report the terrain under the cursor even over markers (for placing things). */
+  readonly groundOnly = input<boolean>(false);
   /** Moves the camera to look at this position whenever it changes. */
   readonly focus = input<WorldPosition | undefined>(undefined);
 
@@ -179,7 +181,7 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
     if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > CLICK_TOLERANCE_PX) {
       return;
     }
-    const result = this.pickAt(event);
+    const result = this.pickAt(event, this.groundOnly());
     if (result) {
       this.picked.emit(result);
     }
@@ -200,14 +202,14 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
     this.hoverLabel.set(undefined);
   }
 
-  private pickAt(event: PointerEvent): PickResult | undefined {
+  private pickAt(event: PointerEvent, groundOnly = false): PickResult | undefined {
     const rect = this.canvasRef().nativeElement.getBoundingClientRect();
     if (!rect.width || !rect.height) {
       return undefined;
     }
     const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    return this.world.pick(x, y);
+    return this.world.pick(x, y, undefined, groundOnly);
   }
 
   private labelFor(key: string): string {

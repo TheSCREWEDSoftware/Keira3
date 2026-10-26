@@ -360,7 +360,7 @@ export class WorldEditorComponent implements OnInit {
     const point = points.reduce((max, w) => Math.max(max, w.point), 0) + 1;
     this.changes.addWaypoint({ pathId, point, ...position, delay: 0 });
     this.bump();
-    this.selectedKey.set(waypointKey(pathKey(pathId), point));
+    this.select(waypointKey(pathKey(pathId), point));
   }
 
   /** The placement form is only shown while something is selected. */

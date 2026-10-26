@@ -116,6 +116,7 @@
         [editableKey]="editableKey()"
         [gizmoMode]="gizmoMode()"
         [snapToGround]="snapToGround()"
+        [groundOnly]="tool() !== 'select'"
         [focus]="focus()"
         (picked)="onPicked($event)"
         (objectMoved)="onObjectMoved($event)"
