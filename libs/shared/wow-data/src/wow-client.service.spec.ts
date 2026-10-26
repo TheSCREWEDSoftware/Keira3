@@ -7,7 +7,7 @@ import { createFakeNative, FakeMpq, FakeNative } from './wow-native-api.mock';
 
 const formats = vi.hoisted(() => ({
   parseAdtChunks: vi.fn(),
-  parseWdtTiles: vi.fn(),
+  parseWdt: vi.fn(),
   decodeBlp: vi.fn(),
 }));
 vi.mock('./formats', () => formats);
@@ -156,18 +156,45 @@ describe('WowClientService', () => {
   describe('terrain', () => {
     it('lists map tiles from the WDT', async () => {
       const { service } = setup({ mpqs: standardMpqs() });
-      formats.parseWdtTiles.mockReturnValue([{ tx: 1, ty: 2 }]);
+      formats.parseWdt.mockReturnValue({ tiles: [{ tx: 1, ty: 2 }], layerSplatDepth: 4 });
       expect(await service.getMapTiles('Azeroth')).toEqual([{ tx: 1, ty: 2 }]);
-      expect(Array.from(formats.parseWdtTiles.mock.calls[0][0])).toEqual([9]);
+      expect(await service.getMapTiles('azeroth')).toEqual([{ tx: 1, ty: 2 }]);
+      expect(formats.parseWdt).toHaveBeenCalledTimes(1);
+      expect(Array.from(formats.parseWdt.mock.calls[0][0])).toEqual([9]);
       expect(await service.getMapTiles('Nowhere')).toEqual([]);
     });
 
-    it('builds terrain meshes from ADTs', async () => {
-      const { service } = setup({ mpqs: { 'common.MPQ': { files: { 'World\\Maps\\Azeroth\\Azeroth_32_48.adt': [1] } } } });
+    it('builds terrain meshes from ADTs with the alpha depth of the WDT', async () => {
+      const { service } = setup({
+        mpqs: {
+          'common.MPQ': {
+            files: {
+              'World\\Maps\\Azeroth\\Azeroth.wdt': [9],
+              'World\\Maps\\Azeroth\\Azeroth_32_48.adt': [1],
+              'World\\Maps\\NoWdt\\NoWdt_1_1.adt': [1],
+            },
+          },
+        },
+      });
+      formats.parseWdt.mockReturnValue({ tiles: [], layerSplatDepth: 8 });
       formats.parseAdtChunks.mockReturnValue([]);
       const mesh = await service.getTerrain('Azeroth', { tx: 32, ty: 48 });
       expect(mesh?.tile).toEqual({ tx: 32, ty: 48 });
+      expect(formats.parseAdtChunks.mock.calls[0][1]).toBe(8);
       expect(await service.getTerrain('Azeroth', { tx: 1, ty: 1 })).toBeUndefined();
+
+      await service.getTerrain('NoWdt', { tx: 1, ty: 1 });
+      expect(formats.parseAdtChunks.mock.calls[1][1]).toBe(4);
+    });
+
+    it('forgets a WDT that failed to load', async () => {
+      const { service } = setup({ mpqs: { 'common.MPQ': { files: { 'World\\Maps\\Azeroth\\Azeroth.wdt': [9] } } } });
+      formats.parseWdt.mockImplementationOnce(() => {
+        throw new Error('bad wdt');
+      });
+      await expect(service.getMapTiles('Azeroth')).rejects.toThrowError('bad wdt');
+      formats.parseWdt.mockReturnValue({ tiles: [{ tx: 3, ty: 3 }], layerSplatDepth: 4 });
+      expect(await service.getMapTiles('Azeroth')).toEqual([{ tx: 3, ty: 3 }]);
     });
 
     it('decodes minimaps through md5translate.trs', async () => {

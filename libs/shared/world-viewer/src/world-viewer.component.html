@@ -1,0 +1,26 @@
+<div
+  #host
+  class="world-viewer"
+  data-testid="world-viewer"
+  (pointerdown)="onPointerDown($event)"
+  (pointerup)="onPointerUp($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerleave)="onPointerLeave()"
+  (contextmenu)="$event.preventDefault()"
+>
+  <canvas #canvas class="world-viewer-canvas" data-testid="world-viewer-canvas" tabindex="0"></canvas>
+
+  @if (hoverLabel(); as label) {
+    <div class="world-viewer-label" data-testid="world-viewer-label" [style.left.px]="label.x" [style.top.px]="label.y">
+      {{ label.text }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="world-viewer-status" data-testid="world-viewer-loading">{{ 'WORLD_EDITOR.LOADING_TERRAIN' | translate }}</div>
+  }
+
+  @if (error(); as message) {
+    <div class="world-viewer-status world-viewer-error" data-testid="world-viewer-error">{{ message | translate }}</div>
+  }
+</div>

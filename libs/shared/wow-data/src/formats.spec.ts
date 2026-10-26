@@ -1,22 +1,26 @@
-import { decodeBlp, parseAdtChunks, parseWdtTiles, toArrayBuffer } from './formats';
+import { decodeBlp, parseAdtChunks, parseWdt, toArrayBuffer } from './formats';
 
 const mocks = vi.hoisted(() => ({
   chunks: [] as { position: number[]; vertexHeights: Float32Array; holes: number; areaId: number }[],
   available: new Uint8Array(64 * 64),
   image: { width: 2, height: 1, data: [1, 2, 3, 4, 5, 6, 7, 8] },
   getImage: vi.fn(),
+  depth: 0,
 }));
 
 vi.mock('@wowserhq/format', () => ({
   BLP_IMAGE_FORMAT: { IMAGE_ABGR8888: 2 },
   MapArea: class {
+    constructor(readonly depth: number) {
+      mocks.depth = depth;
+    }
     load(): { chunks: typeof mocks.chunks } {
       return { chunks: mocks.chunks };
     }
   },
   Map: class {
-    load(): { availableAreas: Uint8Array } {
-      return { availableAreas: mocks.available };
+    load(): { availableAreas: Uint8Array; layerSplatDepth: number } {
+      return { availableAreas: mocks.available, layerSplatDepth: 8 };
     }
   },
   Blp: class {
@@ -30,17 +34,21 @@ describe('formats', () => {
   it('extracts terrain chunks from an ADT', () => {
     const heights = new Float32Array(145);
     mocks.chunks = [{ position: [1, 2, 3], vertexHeights: heights, holes: 4, areaId: 12 }];
-    expect(parseAdtChunks(new Uint8Array())).toEqual([{ position: [1, 2, 3], vertexHeights: heights, holes: 4 }]);
+    expect(parseAdtChunks(new Uint8Array(), 4)).toEqual([{ position: [1, 2, 3], vertexHeights: heights, holes: 4 }]);
+    expect(mocks.depth).toBe(4);
   });
 
-  it('lists the tiles flagged in a WDT', () => {
+  it('lists the tiles flagged in a WDT and its alpha map depth', () => {
     mocks.available.fill(0);
     mocks.available[48 * 64 + 32] = 1;
     mocks.available[0] = 1;
-    expect(parseWdtTiles(new Uint8Array())).toEqual([
-      { tx: 0, ty: 0 },
-      { tx: 32, ty: 48 },
-    ]);
+    expect(parseWdt(new Uint8Array())).toEqual({
+      tiles: [
+        { tx: 0, ty: 0 },
+        { tx: 32, ty: 48 },
+      ],
+      layerSplatDepth: 8,
+    });
   });
 
   it('decodes the top mip level of a BLP as RGBA', () => {

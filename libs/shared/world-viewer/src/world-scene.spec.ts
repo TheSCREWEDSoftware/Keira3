@@ -1,0 +1,211 @@
+import { tileCenter, worldToScene, WorldPosition } from '@keira/shared/wow-data';
+import { BufferGeometry, Line, Mesh, MeshLambertMaterial } from 'three';
+import { flatTile } from './world-viewer.mock';
+import { pathColor, WorldScene } from './world-scene';
+import { WaypointPath, WorldSpawn } from './world-viewer.model';
+
+const CENTER = tileCenter({ tx: 32, ty: 48 });
+
+const spawn = (key: string, kind: 'creature' | 'gameobject', position: WorldPosition, extra: Partial<WorldSpawn> = {}): WorldSpawn => ({
+  key,
+  kind,
+  guid: 1,
+  entry: 2,
+  label: key,
+  position,
+  orientation: 0,
+  ...extra,
+});
+
+const at = (dx: number, dy: number, z = 50): WorldPosition => ({ x: CENTER.x + dx, y: CENTER.y + dy, z });
+
+/** Points the camera straight down at a world position. */
+function lookDownAt(world: WorldScene, position: WorldPosition, height = 100): void {
+  const p = worldToScene(position);
+  world.camera.position.set(p.x, p.y + height, p.z);
+  world.camera.lookAt(p.x, p.y, p.z);
+}
+
+describe('pathColor', () => {
+  it('is stable per key', () => {
+    expect(pathColor('path:1')).toBe(pathColor('path:1'));
+    expect(typeof pathColor('')).toBe('number');
+  });
+});
+
+describe('WorldScene', () => {
+  describe('terrain', () => {
+    it('adds, replaces and removes tiles', () => {
+      const world = new WorldScene();
+      world.setTerrainTile(flatTile());
+      expect(world.terrainKeys).toEqual(['32_48']);
+      expect(world.hasTerrainTile('32_48')).toBe(true);
+
+      const image = { width: 1, height: 1, data: new Uint8Array([255, 0, 0, 255]) };
+      world.setTerrainTile(flatTile(), image);
+      expect(world.terrainKeys).toEqual(['32_48']);
+      const tile = world.scene.getObjectByName('tile:32_48') as Mesh;
+      expect((tile.material as MeshLambertMaterial).map).toBeTruthy();
+
+      world.removeTerrainTile('nope');
+      world.clearTerrain();
+      expect(world.terrainKeys).toEqual([]);
+    });
+
+    it('reports the ground height under a position', () => {
+      const world = new WorldScene();
+      world.setTerrainTile(flatTile(42));
+      expect(world.groundHeightAt(CENTER.x, CENTER.y)).toBeCloseTo(42);
+      expect(world.groundHeightAt(0, 0)).toBeUndefined();
+    });
+  });
+
+  describe('spawns', () => {
+    it('places markers in scene coordinates, facing their orientation', () => {
+      const world = new WorldScene();
+      world.setSpawns([spawn('creature:1', 'creature', at(0, 0), { orientation: 1 }), spawn('gameobject:2', 'gameobject', at(5, 5))]);
+
+      expect(world.objectKeys).toEqual(['creature:1', 'gameobject:2']);
+      const marker = world.getObject('creature:1') as Mesh;
+      const expected = worldToScene(at(0, 0));
+      expect(marker.position.x).toBeCloseTo(expected.x);
+      expect(marker.position.y).toBeCloseTo(expected.y);
+      expect(marker.position.z).toBeCloseTo(expected.z);
+      expect(marker.rotation.y).toBe(1);
+      expect(world.getObjectState('creature:1')?.orientation).toBe(1);
+      expect(world.getObjectState('missing')).toBeUndefined();
+    });
+
+    it('replaces previous spawns', () => {
+      const world = new WorldScene();
+      world.setSpawns([spawn('creature:1', 'creature', at(0, 0))]);
+      world.setSpawns([spawn('creature:3', 'creature', at(0, 0))]);
+      expect(world.objectKeys).toEqual(['creature:3']);
+    });
+
+    it('draws pending spawns translucent and highlights the selection', () => {
+      const world = new WorldScene();
+      world.setSelection('creature:1');
+      world.setSpawns([spawn('creature:1', 'creature', at(0, 0)), spawn('creature:2', 'creature', at(1, 1), { pending: true })]);
+
+      const selected = (world.getObject('creature:1') as Mesh).material as MeshLambertMaterial;
+      const pending = (world.getObject('creature:2') as Mesh).material as MeshLambertMaterial;
+      expect(world.selection).toBe('creature:1');
+      expect(selected.emissiveIntensity).toBeGreaterThan(0);
+      expect(pending.transparent).toBe(true);
+
+      world.setSelection('creature:2');
+      expect(((world.getObject('creature:1') as Mesh).material as MeshLambertMaterial).emissiveIntensity).toBe(0);
+      expect(((world.getObject('creature:2') as Mesh).material as MeshLambertMaterial).emissiveIntensity).toBeGreaterThan(0);
+    });
+
+    it('scales markers with camera distance', () => {
+      const world = new WorldScene();
+      world.setSpawns([spawn('creature:1', 'creature', at(0, 0)), spawn('creature:2', 'creature', at(5000, 0))]);
+      lookDownAt(world, at(0, 0), 10);
+      world.updateMarkerScale();
+      expect(world.getObject('creature:1')?.scale.x).toBe(1);
+      expect(world.getObject('creature:2')?.scale.x).toBe(12);
+    });
+  });
+
+  describe('waypoints', () => {
+    const path = (closed: boolean, count = 3): WaypointPath => ({
+      key: 'path:1',
+      label: 'Path 1',
+      closed,
+      points: Array.from({ length: count }, (_, i) => ({ point: i + 1, position: at(i * 10, 0), orientation: i === 0 ? null : 0.5 })),
+    });
+
+    const lineOf = (world: WorldScene): Line => world.scene.getObjectByName('path:1:line') as Line;
+
+    it('draws a line through the points and a sphere per point', () => {
+      const world = new WorldScene();
+      world.setWaypointPaths([path(false)]);
+      expect(world.objectKeys).toEqual(['path:1#1', 'path:1#2', 'path:1#3']);
+      expect(lineOf(world).geometry.getAttribute('position').count).toBe(3);
+
+      const state = world.getObjectState('path:1#2');
+      expect(state?.position.x).toBeCloseTo(at(10, 0).x);
+      expect(state?.position.z).toBeCloseTo(50);
+    });
+
+    it('closes looping paths with more than two points', () => {
+      const world = new WorldScene();
+      world.setWaypointPaths([path(true)]);
+      expect(lineOf(world).geometry.getAttribute('position').count).toBe(4);
+      world.setWaypointPaths([path(true, 2)]);
+      expect(lineOf(world).geometry.getAttribute('position').count).toBe(2);
+    });
+
+    it('redraws the line after a point moved', () => {
+      for (const closed of [false, true]) {
+        const world = new WorldScene();
+        world.setWaypointPaths([path(closed)]);
+        world.getObject('path:1#2')?.position.set(1, 2, 3);
+        world.refreshPathLine('path:1');
+        const positions = lineOf(world).geometry.getAttribute('position');
+        expect(positions.count).toBe(closed ? 4 : 3);
+        expect([positions.getX(1), positions.getY(1), positions.getZ(1)]).toEqual([1, 2, 3]);
+      }
+      new WorldScene().refreshPathLine('unknown');
+    });
+
+    it('highlights a selected waypoint', () => {
+      const world = new WorldScene();
+      world.setWaypointPaths([path(false)]);
+      world.setSelection('path:1#1');
+      expect(((world.getObject('path:1#1') as Mesh).material as MeshLambertMaterial).emissiveIntensity).toBeGreaterThan(0);
+    });
+  });
+
+  describe('picking', () => {
+    const setup = (): WorldScene => {
+      const world = new WorldScene();
+      world.setTerrainTile(flatTile(50));
+      world.setSpawns([spawn('creature:1', 'creature', at(0, 0))]);
+      world.setWaypointPaths([{ key: 'path:9', label: 'Path 9', points: [{ point: 4, position: at(100, 100) }] }]);
+      return world;
+    };
+
+    it('picks spawns', () => {
+      const world = setup();
+      lookDownAt(world, at(0, 0));
+      expect(world.pick(0, 0)).toEqual({ type: 'spawn', key: 'creature:1', position: expect.objectContaining({ z: 50 }) });
+    });
+
+    it('picks waypoints', () => {
+      const world = setup();
+      lookDownAt(world, at(100, 100));
+      expect(world.pick(0, 0)).toEqual(expect.objectContaining({ type: 'waypoint', key: 'path:9#4', pathKey: 'path:9', point: 4 }));
+    });
+
+    it('picks the ground', () => {
+      const world = setup();
+      lookDownAt(world, at(-100, -100));
+      const result = world.pick(0, 0);
+      expect(result?.type).toBe('ground');
+      expect(result?.position.x).toBeCloseTo(at(-100, -100).x, 1);
+      expect(result?.position.z).toBeCloseTo(50, 1);
+    });
+
+    it('picks nothing in the sky', () => {
+      const world = setup();
+      world.camera.position.set(0, 1000, 0);
+      world.camera.lookAt(0, 2000, 0);
+      expect(world.pick(0, 0)).toBeUndefined();
+    });
+  });
+
+  it('disposes everything', () => {
+    const world = new WorldScene();
+    world.setTerrainTile(flatTile());
+    world.setSpawns([spawn('creature:1', 'creature', at(0, 0))]);
+    world.setWaypointPaths([{ key: 'p', label: 'p', points: [] }]);
+    const disposeSpy = vi.spyOn(BufferGeometry.prototype, 'dispose');
+    world.dispose();
+    expect(world.terrainKeys).toEqual([]);
+    expect(world.objectKeys).toEqual([]);
+    expect(disposeSpy).toHaveBeenCalled();
+  });
+});

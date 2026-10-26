@@ -17,24 +17,32 @@ export function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
   return whole ? (bytes.buffer as ArrayBuffer) : bytes.slice().buffer;
 }
 
-export function parseAdtChunks(bytes: Uint8Array): TerrainChunk[] {
-  return new MapArea().load(toArrayBuffer(bytes)).chunks.map((chunk) => ({
+export type LayerSplatDepth = 4 | 8;
+
+/** `layerSplatDepth` must come from the map's WDT: parsing alpha maps with the wrong depth fails. */
+export function parseAdtChunks(bytes: Uint8Array, layerSplatDepth: LayerSplatDepth): TerrainChunk[] {
+  return new MapArea(layerSplatDepth).load(toArrayBuffer(bytes)).chunks.map((chunk) => ({
     position: chunk.position,
     vertexHeights: chunk.vertexHeights,
     holes: chunk.holes,
   }));
 }
 
-/** Tiles flagged as present in a map's WDT (MAIN chunk is stored row by row: index = ty * 64 + tx). */
-export function parseWdtTiles(bytes: Uint8Array): TileCoord[] {
-  const available = new WdtMap().load(toArrayBuffer(bytes)).availableAreas;
+export interface WdtInfo {
+  /** Tiles flagged as present (MAIN chunk is stored row by row: index = ty * 64 + tx). */
+  tiles: TileCoord[];
+  layerSplatDepth: LayerSplatDepth;
+}
+
+export function parseWdt(bytes: Uint8Array): WdtInfo {
+  const wdt = new WdtMap().load(toArrayBuffer(bytes));
   const tiles: TileCoord[] = [];
-  available.forEach((flag, index) => {
+  wdt.availableAreas.forEach((flag, index) => {
     if (flag) {
       tiles.push({ tx: index % TILE_COUNT, ty: Math.floor(index / TILE_COUNT) });
     }
   });
-  return tiles;
+  return { tiles, layerSplatDepth: wdt.layerSplatDepth };
 }
 
 /** Decodes the top mip level of a BLP texture. ABGR8888 is laid out in memory as R, G, B, A bytes. */

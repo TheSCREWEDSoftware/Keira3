@@ -1,0 +1,60 @@
+import { WorldPosition } from '@keira/shared/wow-data';
+
+export type SpawnKind = 'creature' | 'gameobject';
+
+/** A creature or gameobject shown in the world. `key` must be unique in the scene (e.g. `creature:1234`). */
+export interface WorldSpawn {
+  key: string;
+  kind: SpawnKind;
+  guid: number;
+  entry: number;
+  label: string;
+  position: WorldPosition;
+  orientation: number;
+  /** Spawn not saved to the database yet (drawn translucent). */
+  pending?: boolean;
+}
+
+export interface WorldWaypoint {
+  point: number;
+  position: WorldPosition;
+  orientation?: number | null;
+  delay?: number;
+}
+
+/** An ordered path (waypoint_data / waypoints). `key` must be unique in the scene (e.g. `path:12340`). */
+export interface WaypointPath {
+  key: string;
+  label: string;
+  points: WorldWaypoint[];
+  /** Draws a segment from the last point back to the first. */
+  closed?: boolean;
+}
+
+export type PickResult =
+  | { type: 'spawn'; key: string; position: WorldPosition }
+  | { type: 'waypoint'; key: string; pathKey: string; point: number; position: WorldPosition }
+  | { type: 'ground'; position: WorldPosition };
+
+export interface ObjectMoved {
+  key: string;
+  position: WorldPosition;
+  orientation: number;
+}
+
+export type GizmoMode = 'translate' | 'rotate';
+
+export const WAYPOINT_KEY_SEPARATOR = '#';
+
+export function waypointKey(pathKey: string, point: number): string {
+  return `${pathKey}${WAYPOINT_KEY_SEPARATOR}${point}`;
+}
+
+export function parseWaypointKey(key: string): { pathKey: string; point: number } | undefined {
+  const index = key.lastIndexOf(WAYPOINT_KEY_SEPARATOR);
+  if (index <= 0) {
+    return undefined;
+  }
+  const point = Number(key.slice(index + 1));
+  return Number.isInteger(point) ? { pathKey: key.slice(0, index), point } : undefined;
+}

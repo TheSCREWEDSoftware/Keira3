@@ -2,7 +2,7 @@ import { inject, Service } from '@angular/core';
 import { TileCoord } from './coords';
 import { DbcFile, parseMapDbc, WowMap } from './dbc';
 import { FolderArchive } from './folder-archive';
-import { decodeBlp, parseAdtChunks, parseWdtTiles, RgbaImage } from './formats';
+import { decodeBlp, parseAdtChunks, parseWdt, RgbaImage, WdtInfo } from './formats';
 import { MD5_TRANSLATE_PATH, MINIMAP_ROOT, minimapKey, parseMd5Translate } from './minimap';
 import { parseConfigWtfLocale, pickLocale, sortMpqArchives } from './mpq-order';
 import { buildTerrainMesh, TerrainMeshData } from './terrain-mesh';
@@ -26,6 +26,7 @@ export class WowClientService {
   private client?: Promise<OpenClient>;
   private minimapIndex?: Promise<Map<string, string>>;
   private maps?: Promise<WowMap[]>;
+  private readonly wdts = new Map<string, Promise<WdtInfo | undefined>>();
   private mountCounter = 0;
 
   /** False in the browser build: reading local game files needs Electron. */
@@ -64,13 +65,27 @@ export class WowClientService {
   }
 
   async getMapTiles(directory: string): Promise<TileCoord[]> {
-    const wdt = await this.readFile(`World\\Maps\\${directory}\\${directory}.wdt`);
-    return wdt ? parseWdtTiles(wdt) : [];
+    return (await this.getWdt(directory))?.tiles ?? [];
   }
 
   async getTerrain(directory: string, tile: TileCoord): Promise<TerrainMeshData | undefined> {
     const adt = await this.readFile(`World\\Maps\\${directory}\\${directory}_${tile.tx}_${tile.ty}.adt`);
-    return adt ? buildTerrainMesh(tile, parseAdtChunks(adt)) : undefined;
+    if (!adt) {
+      return undefined;
+    }
+    const layerSplatDepth = (await this.getWdt(directory))?.layerSplatDepth ?? 4;
+    return buildTerrainMesh(tile, parseAdtChunks(adt, layerSplatDepth));
+  }
+
+  private getWdt(directory: string): Promise<WdtInfo | undefined> {
+    const key = directory.toLowerCase();
+    let wdt = this.wdts.get(key);
+    if (!wdt) {
+      wdt = this.readFile(`World\\Maps\\${directory}\\${directory}.wdt`).then((bytes) => (bytes ? parseWdt(bytes) : undefined));
+      wdt.catch(() => this.wdts.delete(key));
+      this.wdts.set(key, wdt);
+    }
+    return wdt;
   }
 
   async getMinimap(directory: string, tile: TileCoord): Promise<RgbaImage | undefined> {
@@ -85,6 +100,7 @@ export class WowClientService {
     this.client = undefined;
     this.minimapIndex = undefined;
     this.maps = undefined;
+    this.wdts.clear();
     if (!client) {
       return;
     }
