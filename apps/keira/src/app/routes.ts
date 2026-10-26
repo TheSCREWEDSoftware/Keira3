@@ -556,4 +556,9 @@ export const KEIRA_ROUTES: Routes = [
     path: 'unused-guid-search',
     component: UnusedGuidSearchComponent,
   },
+  {
+    path: 'world-editor',
+    // Lazy: keeps Three.js and the game-data parsers out of the startup bundle.
+    loadComponent: () => import('@keira/features/world-editor').then((m) => m.WorldEditorComponent),
+  },
 ];

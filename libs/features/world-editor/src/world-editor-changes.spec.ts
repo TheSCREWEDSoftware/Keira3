@@ -1,0 +1,219 @@
+import { gameobjectRotation, WorldEditorChanges } from './world-editor-changes';
+import { SpawnRecord, WaypointRecord } from './world-editor.model';
+
+const creature = (guid: number, extra: Partial<SpawnRecord> = {}): SpawnRecord => ({
+  type: 'creature',
+  guid,
+  entry: 197,
+  name: 'Marshal McBride',
+  map: 0,
+  x: 1,
+  y: 2,
+  z: 3,
+  o: 0,
+  pathId: 0,
+  ...extra,
+});
+const gameobject = (guid: number, extra: Partial<SpawnRecord> = {}): SpawnRecord => ({
+  ...creature(guid),
+  type: 'gameobject',
+  name: '',
+  ...extra,
+});
+const waypoint = (pathId: number, point: number, extra: Partial<WaypointRecord> = {}): WaypointRecord => ({
+  pathId,
+  point,
+  x: 10,
+  y: 20,
+  z: 30,
+  delay: 0,
+  ...extra,
+});
+
+describe('gameobjectRotation', () => {
+  it('builds a yaw-only quaternion', () => {
+    expect(gameobjectRotation(0)).toEqual({ rotation0: 0, rotation1: 0, rotation2: 0, rotation3: 1 });
+    expect(gameobjectRotation(Math.PI)).toEqual({ rotation0: 0, rotation1: 0, rotation2: 1, rotation3: 0 });
+  });
+});
+
+describe('WorldEditorChanges', () => {
+  it('starts empty', () => {
+    const changes = new WorldEditorChanges();
+    expect(changes.count).toBe(0);
+    expect(changes.toSql()).toBe('');
+    expect(changes.describe()).toEqual([]);
+  });
+
+  describe('spawns', () => {
+    it('inserts placed creatures with the default spawn values', () => {
+      const changes = new WorldEditorChanges();
+      changes.placeSpawn(creature(100, { x: -8913.123456, y: -137.5, z: 82.25, o: 1.5 }));
+      expect(changes.isNewSpawn('creature:100')).toBe(true);
+      expect(changes.count).toBe(1);
+      expect(changes.describe()).toEqual(['Place creature 100 (Marshal McBride)']);
+      expect(changes.toSql()).toBe(
+        'INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `phaseMask`, `equipment_id`, `position_x`, `position_y`, ' +
+          '`position_z`, `orientation`, `spawntimesecs`, `wander_distance`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, ' +
+          "`unit_flags`, `dynamicflags`, `ScriptName`, `Comment`, `VerifiedBuild`) VALUES (100, 197, 0, 0, 0, 1, 1, 0, -8913.1235, -137.5, 82.25, 1.5, 300, 0, 0, 1, 0, 0, 0, 0, 0, '', '', 0);",
+      );
+    });
+
+    it('inserts placed gameobjects with their rotation', () => {
+      const changes = new WorldEditorChanges();
+      changes.placeSpawn(gameobject(5, { o: Math.PI }));
+      expect(changes.describe()).toEqual(['Place gameobject 5']);
+      expect(changes.toSql()).toContain('INSERT INTO `gameobject`');
+      expect(changes.toSql()).toContain('3.1416, 0, 0, 1, 0, 300');
+    });
+
+    it('updates the insert when a new spawn is moved, and drops it when deleted', () => {
+      const changes = new WorldEditorChanges();
+      changes.placeSpawn(creature(100));
+      changes.createPath(100, 1000);
+      changes.moveSpawn(creature(100), { x: 7, y: 8, z: 9, o: 1 });
+      expect(changes.applyToSpawns([], 0)).toEqual([creature(100, { x: 7, y: 8, z: 9, o: 1, pathId: 1000 })]);
+
+      changes.deleteSpawn(creature(100));
+      expect(changes.count).toBe(0);
+    });
+
+    it('updates moved spawns, keeping the original until moved back', () => {
+      const changes = new WorldEditorChanges();
+      changes.moveSpawn(gameobject(5), { x: 4, y: 5, z: 6, o: Math.PI });
+      changes.moveSpawn(gameobject(5, { x: 4 }), { x: 4.5, y: 5, z: 6, o: Math.PI });
+      expect(changes.describe()).toEqual(['Move gameobject 5']);
+      expect(changes.toSql()).toBe(
+        'UPDATE `gameobject` SET `position_x` = 4.5, `position_y` = 5, `position_z` = 6, `orientation` = 3.1416, `rotation0` = 0, `rotation1` = 0, `rotation2` = 1, `rotation3` = 0 WHERE (`guid` = 5);',
+      );
+
+      changes.moveSpawn(gameobject(5, { x: 4.5 }), { x: 1, y: 2, z: 3, o: 0 });
+      expect(changes.count).toBe(0);
+    });
+
+    it('deletes spawns (and their addon) using the original data', () => {
+      const changes = new WorldEditorChanges();
+      changes.moveSpawn(creature(7), { x: 9, y: 9, z: 9, o: 0 });
+      changes.createPath(7, 70);
+      changes.deleteSpawn(creature(7, { x: 9 }));
+      changes.deleteSpawn(gameobject(8));
+      expect(changes.describe()).toEqual(['Delete creature 7 (Marshal McBride)', 'Delete gameobject 8']);
+      expect(changes.toSql().split('\n')).toEqual([
+        'DELETE FROM `creature` WHERE (`guid` = 7);',
+        'DELETE FROM `creature_addon` WHERE (`guid` = 7);',
+        'DELETE FROM `gameobject` WHERE (`guid` = 8);',
+        'DELETE FROM `gameobject_addon` WHERE (`guid` = 8);',
+      ]);
+    });
+
+    it('applies pending edits to loaded spawns', () => {
+      const changes = new WorldEditorChanges();
+      changes.deleteSpawn(creature(1));
+      changes.moveSpawn(creature(2), { x: 50, y: 60, z: 70, o: 1 });
+      changes.createPath(3, 30);
+      changes.placeSpawn(creature(4));
+      changes.placeSpawn(creature(5, { map: 1 }));
+
+      const loaded = [creature(1), creature(2), creature(3), creature(4, { name: 'stale' }), gameobject(6)];
+      expect(changes.applyToSpawns(loaded, 0)).toEqual([
+        creature(2, { x: 50, y: 60, z: 70, o: 1 }),
+        creature(3, { pathId: 30 }),
+        gameobject(6),
+        creature(4),
+      ]);
+    });
+  });
+
+  describe('paths & waypoints', () => {
+    it('creates paths for creatures', () => {
+      const changes = new WorldEditorChanges();
+      changes.createPath(7, 70);
+      expect(changes.describe()).toEqual(['Create path 70 for creature 7']);
+      expect(changes.toSql().split('\n')).toEqual([
+        'INSERT INTO `creature_addon` (`guid`, `path_id`) VALUES (7, 70) ON DUPLICATE KEY UPDATE `path_id` = 70;',
+        'UPDATE `creature` SET `MovementType` = 2 WHERE (`guid` = 7);',
+      ]);
+    });
+
+    it('inserts added waypoints, and updates them when moved', () => {
+      const changes = new WorldEditorChanges();
+      changes.addWaypoint(waypoint(70, 1));
+      changes.moveWaypoint(waypoint(70, 1), { x: 1, y: 2, z: 3 });
+      expect(changes.describe()).toEqual(['Add waypoint 70 #1']);
+      expect(changes.toSql()).toBe(
+        'INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (70, 1, 1, 2, 3, 0);',
+      );
+    });
+
+    it('updates moved waypoints until moved back', () => {
+      const changes = new WorldEditorChanges();
+      changes.moveWaypoint(waypoint(80, 2), { x: 9, y: 8, z: 7 });
+      changes.moveWaypoint(waypoint(80, 2, { x: 9 }), { x: 9, y: 8, z: 6 });
+      expect(changes.describe()).toEqual(['Move waypoint 80 #2']);
+      expect(changes.toSql()).toBe(
+        'UPDATE `waypoint_data` SET `position_x` = 9, `position_y` = 8, `position_z` = 6 WHERE (`id` = 80) AND (`point` = 2);',
+      );
+
+      changes.moveWaypoint(waypoint(80, 2), { x: 10, y: 20, z: 30 });
+      expect(changes.count).toBe(0);
+    });
+
+    it('deletes waypoints, dropping new ones and using the original of moved ones', () => {
+      const changes = new WorldEditorChanges();
+      changes.addWaypoint(waypoint(70, 1));
+      changes.deleteWaypoint(waypoint(70, 1));
+      expect(changes.count).toBe(0);
+
+      changes.moveWaypoint(waypoint(80, 3), { x: 1, y: 1, z: 1 });
+      changes.deleteWaypoint(waypoint(80, 3, { x: 1 }));
+      expect(changes.describe()).toEqual(['Delete waypoint 80 #3']);
+      expect(changes.toSql()).toBe('DELETE FROM `waypoint_data` WHERE (`id` = 80) AND (`point` = 3);');
+    });
+
+    it('turns re-adding a deleted waypoint into a move', () => {
+      const changes = new WorldEditorChanges();
+      changes.deleteWaypoint(waypoint(80, 3));
+      changes.addWaypoint(waypoint(80, 3, { x: 99 }));
+      expect(changes.describe()).toEqual(['Move waypoint 80 #3']);
+    });
+
+    it('applies pending edits to loaded waypoints, sorted', () => {
+      const changes = new WorldEditorChanges();
+      changes.deleteWaypoint(waypoint(80, 1));
+      changes.moveWaypoint(waypoint(80, 2), { x: 0, y: 0, z: 0 });
+      changes.addWaypoint(waypoint(70, 5));
+      changes.addWaypoint(waypoint(90, 1));
+      const loaded = [waypoint(80, 3), waypoint(80, 1), waypoint(80, 2)];
+      expect(changes.applyToWaypoints(loaded, [70, 80])).toEqual([waypoint(70, 5), waypoint(80, 2, { x: 0, y: 0, z: 0 }), waypoint(80, 3)]);
+    });
+  });
+
+  it('orders statements: deletes, inserts, updates, paths, then waypoints', () => {
+    const changes = new WorldEditorChanges();
+    changes.addWaypoint(waypoint(70, 1));
+    changes.createPath(9, 90);
+    changes.moveSpawn(creature(2), { x: 0, y: 0, z: 0, o: 0 });
+    changes.placeSpawn(creature(3));
+    changes.deleteSpawn(creature(4));
+    changes.deleteWaypoint(waypoint(80, 1));
+    changes.moveWaypoint(waypoint(80, 2), { x: 0, y: 0, z: 0 });
+    const kinds = changes
+      .toSql()
+      .split('\n')
+      .map((line) => line.split(' ').slice(0, 3).join(' '));
+    expect(kinds).toEqual([
+      'DELETE FROM `creature`',
+      'DELETE FROM `creature_addon`',
+      'INSERT INTO `creature`',
+      'UPDATE `creature` SET',
+      'INSERT INTO `creature_addon`',
+      'UPDATE `creature` SET',
+      'DELETE FROM `waypoint_data`',
+      'INSERT INTO `waypoint_data`',
+      'UPDATE `waypoint_data` SET',
+    ]);
+    expect(changes.count).toBe(7);
+    changes.clear();
+    expect(changes.count).toBe(0);
+  });
+});

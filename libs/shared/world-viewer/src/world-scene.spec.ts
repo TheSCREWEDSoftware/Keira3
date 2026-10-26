@@ -105,7 +105,7 @@ describe('WorldScene', () => {
       lookDownAt(world, at(0, 0), 10);
       world.updateMarkerScale();
       expect(world.getObject('creature:1')?.scale.x).toBe(1);
-      expect(world.getObject('creature:2')?.scale.x).toBe(12);
+      expect(world.getObject('creature:2')?.scale.x).toBe(8);
     });
   });
 

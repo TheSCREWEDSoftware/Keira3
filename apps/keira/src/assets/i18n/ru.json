@@ -193,7 +193,8 @@
       "SELECT_TRAINER": "Тренер",
       "TRAINER_SPELL": "Заклинание тренера"
     },
-    "UNUSED_GUID_SEARCH": "Неиспользуемые GUID"
+    "UNUSED_GUID_SEARCH": "Неиспользуемые GUID",
+    "WORLD_EDITOR": "3D-редактор мира"
   },
   "DASHBOARD": {
     "WELCOME": "Добро пожаловать в Keira3",
@@ -1002,5 +1003,45 @@
     "NO_DATA": "Данные карты недоступны",
     "SHOW": "Показать карту",
     "HIDE": "Скрыть карту"
+  },
+  "WORLD_EDITOR": {
+    "TITLE": "3D-редактор мира",
+    "SETTINGS": "Данные игры",
+    "CLIENT_PATH": "Папка клиента WoW 3.3.5a",
+    "CLIENT_PATH_HELP": "Папка, в которой находятся Wow.exe и Data. Ландшафт и миникарты читаются из её MPQ-архивов.",
+    "SERVER_DATA_PATH": "Папка данных сервера (необязательно)",
+    "SERVER_DATA_PATH_HELP": "DataDir worldserver (содержит dbc, maps, vmaps). Если есть, используется её Map.dbc, чтобы показать пользовательские карты.",
+    "SAVE": "Сохранить",
+    "TELEPORT_PLACEHOLDER": "Телепорт (game_tele)…",
+    "GO_TO": "Перейти",
+    "CREATURES": "Существа",
+    "GAMEOBJECTS": "Игровые объекты",
+    "WAYPOINTS": "Путевые точки",
+    "TOOLS": "Инструменты",
+    "TOOL": {
+      "select": "Выбор",
+      "place-creature": "+ Существо",
+      "place-gameobject": "+ Объект",
+      "add-waypoint": "+ Точка"
+    },
+    "ENTRY": "Entry",
+    "PLACE_HINT": "Введите entry, затем щёлкните по земле, чтобы разместить.",
+    "ADD_WAYPOINT_HINT": "Щёлкните по земле, чтобы добавить точку в путь {{path}}.",
+    "NO_ACTIVE_PATH": "Сначала выберите существо с путём (или создайте путь).",
+    "MOVE": "Переместить",
+    "ROTATE": "Повернуть",
+    "SNAP": "Привязка к земле",
+    "SELECTION": "Выделение",
+    "NOTHING_SELECTED": "Щёлкните по спавну или путевой точке, чтобы выбрать их.",
+    "APPLY": "Применить",
+    "DELETE": "Удалить",
+    "CREATE_PATH": "Создать путь",
+    "PENDING_CHANGES": "Несохранённые изменения",
+    "NO_CHANGES": "Нет несохранённых изменений.",
+    "DISCARD": "Отменить",
+    "LOADING_TERRAIN": "Загрузка ландшафта…",
+    "LOADING_SPAWNS": "Загрузка спавнов…",
+    "ERROR_DESKTOP_ONLY": "Для чтения файлов клиента WoW 3D-редактору мира нужно настольное приложение Keira3.",
+    "CONTROLS_HELP": "ЛКМ: сдвиг · ПКМ: вращение · Колесо: масштаб · R: перемещение/поворот · Del: удалить · Esc: отмена"
   }
 }

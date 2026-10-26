@@ -193,7 +193,8 @@
       "SELECT_TRAINER": "Entrenador",
       "TRAINER_SPELL": "Hechizo de Entrenador"
     },
-    "UNUSED_GUID_SEARCH": "GUIDs sin Usar"
+    "UNUSED_GUID_SEARCH": "GUIDs sin Usar",
+    "WORLD_EDITOR": "Editor de Mundo 3D"
   },
   "DASHBOARD": {
     "WELCOME": "Bienvenido a Keira3",
@@ -1002,5 +1003,45 @@
     "NO_DATA": "No hay datos de mapa disponibles",
     "SHOW": "Mostrar mapa",
     "HIDE": "Ocultar mapa"
+  },
+  "WORLD_EDITOR": {
+    "TITLE": "Editor de Mundo 3D",
+    "SETTINGS": "Datos del juego",
+    "CLIENT_PATH": "Carpeta del cliente WoW 3.3.5a",
+    "CLIENT_PATH_HELP": "La carpeta que contiene Wow.exe y Data. El terreno y los minimapas se leen de sus archivos MPQ.",
+    "SERVER_DATA_PATH": "Carpeta de datos del servidor (opcional)",
+    "SERVER_DATA_PATH_HELP": "El DataDir del worldserver (contiene dbc, maps, vmaps). Si existe, se usa su Map.dbc para listar mapas personalizados.",
+    "SAVE": "Guardar",
+    "TELEPORT_PLACEHOLDER": "Teletransporte (game_tele)…",
+    "GO_TO": "Ir",
+    "CREATURES": "Criaturas",
+    "GAMEOBJECTS": "GameObjects",
+    "WAYPOINTS": "Waypoints",
+    "TOOLS": "Herramientas",
+    "TOOL": {
+      "select": "Seleccionar",
+      "place-creature": "+ Criatura",
+      "place-gameobject": "+ GameObject",
+      "add-waypoint": "+ Waypoint"
+    },
+    "ENTRY": "Entry",
+    "PLACE_HINT": "Introduce un entry y haz clic en el suelo para colocarlo.",
+    "ADD_WAYPOINT_HINT": "Haz clic en el suelo para añadir un punto a la ruta {{path}}.",
+    "NO_ACTIVE_PATH": "Primero selecciona una criatura con ruta (o crea una).",
+    "MOVE": "Mover",
+    "ROTATE": "Rotar",
+    "SNAP": "Ajustar al suelo",
+    "SELECTION": "Selección",
+    "NOTHING_SELECTED": "Haz clic en un spawn o waypoint para seleccionarlo.",
+    "APPLY": "Aplicar",
+    "DELETE": "Eliminar",
+    "CREATE_PATH": "Crear ruta",
+    "PENDING_CHANGES": "Cambios pendientes",
+    "NO_CHANGES": "No hay cambios pendientes.",
+    "DISCARD": "Descartar",
+    "LOADING_TERRAIN": "Cargando terreno…",
+    "LOADING_SPAWNS": "Cargando spawns…",
+    "ERROR_DESKTOP_ONLY": "El editor de mundo 3D necesita la aplicación de escritorio de Keira3 para leer los archivos de tu cliente de WoW.",
+    "CONTROLS_HELP": "Arrastrar izq.: desplazar · Arrastrar der.: rotar · Rueda: zoom · R: mover/rotar · Supr: eliminar · Esc: cancelar"
   }
 }

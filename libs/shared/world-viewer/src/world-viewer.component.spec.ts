@@ -345,7 +345,7 @@ describe(WorldViewerComponent.name, () => {
 
       page.pointer('pointermove', 50, 50);
       fixture.detectChanges();
-      expect(page.label().nativeElement.textContent).toBe('Deputy Willem');
+      expect(page.label().nativeElement.textContent?.trim()).toBe('Deputy Willem');
       expect(page.label().nativeElement.style.left).toBe('64px');
 
       page.pointer('pointerleave', 50, 50);
@@ -355,7 +355,7 @@ describe(WorldViewerComponent.name, () => {
       await update(() => host.focus.set(at(300, 300)));
       page.pointer('pointermove', 50, 50);
       fixture.detectChanges();
-      expect(page.label().nativeElement.textContent).toBe('Path 1 · #3');
+      expect(page.label().nativeElement.textContent?.trim()).toBe('Path 1 · #3');
 
       page.pointer('pointerdown', 50, 50);
       page.pointer('pointermove', 52, 52);

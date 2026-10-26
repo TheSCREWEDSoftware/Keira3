@@ -193,7 +193,8 @@
       "SELECT_TRAINER": "Trainer",
       "TRAINER_SPELL": "Trainer Spell"
     },
-    "UNUSED_GUID_SEARCH": "Unused GUIDs"
+    "UNUSED_GUID_SEARCH": "Unused GUIDs",
+    "WORLD_EDITOR": "3D World Editor"
   },
   "DASHBOARD": {
     "WELCOME": "Welcome to Keira3",
@@ -1002,5 +1003,45 @@
     "NO_DATA": "No map data available",
     "SHOW": "Show map",
     "HIDE": "Hide map"
+  },
+  "WORLD_EDITOR": {
+    "TITLE": "3D World Editor",
+    "SETTINGS": "Game data",
+    "CLIENT_PATH": "WoW 3.3.5a client folder",
+    "CLIENT_PATH_HELP": "The folder that contains Wow.exe and Data. Terrain and minimaps are read from its MPQ archives.",
+    "SERVER_DATA_PATH": "Server data folder (optional)",
+    "SERVER_DATA_PATH_HELP": "The worldserver DataDir (contains dbc, maps, vmaps). Its Map.dbc is used when present, so custom maps are listed.",
+    "SAVE": "Save",
+    "TELEPORT_PLACEHOLDER": "Teleport (game_tele)…",
+    "GO_TO": "Go",
+    "CREATURES": "Creatures",
+    "GAMEOBJECTS": "GameObjects",
+    "WAYPOINTS": "Waypoints",
+    "TOOLS": "Tools",
+    "TOOL": {
+      "select": "Select",
+      "place-creature": "+ Creature",
+      "place-gameobject": "+ GameObject",
+      "add-waypoint": "+ Waypoint"
+    },
+    "ENTRY": "Entry",
+    "PLACE_HINT": "Enter an entry, then click on the ground to place it.",
+    "ADD_WAYPOINT_HINT": "Click on the ground to append a point to path {{path}}.",
+    "NO_ACTIVE_PATH": "Select a creature with a path (or create one) first.",
+    "MOVE": "Move",
+    "ROTATE": "Rotate",
+    "SNAP": "Snap to ground",
+    "SELECTION": "Selection",
+    "NOTHING_SELECTED": "Click a spawn or waypoint to select it.",
+    "APPLY": "Apply",
+    "DELETE": "Delete",
+    "CREATE_PATH": "Create path",
+    "PENDING_CHANGES": "Pending changes",
+    "NO_CHANGES": "No pending changes.",
+    "DISCARD": "Discard",
+    "LOADING_TERRAIN": "Loading terrain…",
+    "LOADING_SPAWNS": "Loading spawns…",
+    "ERROR_DESKTOP_ONLY": "The 3D world editor needs the Keira3 desktop app to read your WoW client files.",
+    "CONTROLS_HELP": "Left-drag: pan · Right-drag: rotate · Wheel: zoom · R: move/rotate · Del: delete · Esc: cancel"
   }
 }

@@ -61,8 +61,8 @@ const COLORS = {
 const PATH_COLORS = [0xe63946, 0xb5179e, 0x7209b7, 0x06d6a0, 0x4361ee, 0xff006e, 0x8ac926, 0xffffff];
 const WAYPOINT_LIFT = 0.4;
 /** Markers keep a readable on-screen size: real size up close, scaled up with camera distance. */
-const MARKER_SCALE_DISTANCE = 40;
-const MARKER_MAX_SCALE = 12;
+const MARKER_SCALE_DISTANCE = 120;
+const MARKER_MAX_SCALE = 8;
 
 /** Stable colour per path key, so a path keeps its colour across reloads. */
 export function pathColor(key: string): number {
@@ -92,11 +92,11 @@ export class WorldScene {
 
   /** Upright pin standing on the spawn point, with a nose pointing where the creature faces (−z before rotation). */
   private readonly creatureGeometry = mergeGeometries([
-    new CylinderGeometry(0.7, 0.7, 2.4, 12).translate(0, 1.2, 0),
-    new ConeGeometry(0.5, 1.4, 10).rotateX(-Math.PI / 2).translate(0, 1.8, -1.2),
+    new CylinderGeometry(0.45, 0.45, 2.2, 10).translate(0, 1.1, 0),
+    new ConeGeometry(0.35, 1.1, 8).rotateX(-Math.PI / 2).translate(0, 1.7, -0.9),
   ]);
-  private readonly gameobjectGeometry = new BoxGeometry(1.6, 1.6, 1.6).translate(0, 0.8, 0);
-  private readonly waypointGeometry = new SphereGeometry(0.6, 12, 8);
+  private readonly gameobjectGeometry = new BoxGeometry(1.2, 1.2, 1.2).translate(0, 0.6, 0);
+  private readonly waypointGeometry = new SphereGeometry(0.5, 12, 8);
   private readonly markerMaterials = new Map<string, MeshLambertMaterial>();
 
   constructor() {

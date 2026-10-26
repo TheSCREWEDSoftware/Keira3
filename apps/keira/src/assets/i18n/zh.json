@@ -193,7 +193,8 @@
       "SELECT_TRAINER": "训练师",
       "TRAINER_SPELL": "训练师法术"
     },
-    "UNUSED_GUID_SEARCH": "未使用的GUID"
+    "UNUSED_GUID_SEARCH": "未使用的GUID",
+    "WORLD_EDITOR": "3D世界编辑器"
   },
   "DASHBOARD": {
     "WELCOME": "欢迎使用Keira3",
@@ -1002,5 +1003,45 @@
     "NO_DATA": "没有可用的地图数据",
     "SHOW": "显示地图",
     "HIDE": "隐藏地图"
+  },
+  "WORLD_EDITOR": {
+    "TITLE": "3D世界编辑器",
+    "SETTINGS": "游戏数据",
+    "CLIENT_PATH": "WoW 3.3.5a 客户端文件夹",
+    "CLIENT_PATH_HELP": "包含 Wow.exe 和 Data 的文件夹。地形和小地图从其 MPQ 文件中读取。",
+    "SERVER_DATA_PATH": "服务器数据文件夹（可选）",
+    "SERVER_DATA_PATH_HELP": "worldserver 的 DataDir（包含 dbc、maps、vmaps）。如果存在，将使用其中的 Map.dbc 以列出自定义地图。",
+    "SAVE": "保存",
+    "TELEPORT_PLACEHOLDER": "传送 (game_tele)…",
+    "GO_TO": "前往",
+    "CREATURES": "生物",
+    "GAMEOBJECTS": "游戏对象",
+    "WAYPOINTS": "路径点",
+    "TOOLS": "工具",
+    "TOOL": {
+      "select": "选择",
+      "place-creature": "+ 生物",
+      "place-gameobject": "+ 游戏对象",
+      "add-waypoint": "+ 路径点"
+    },
+    "ENTRY": "Entry",
+    "PLACE_HINT": "输入 entry，然后点击地面进行放置。",
+    "ADD_WAYPOINT_HINT": "点击地面为路径 {{path}} 添加一个点。",
+    "NO_ACTIVE_PATH": "请先选择一个带路径的生物（或创建路径）。",
+    "MOVE": "移动",
+    "ROTATE": "旋转",
+    "SNAP": "贴合地面",
+    "SELECTION": "选中项",
+    "NOTHING_SELECTED": "点击刷新点或路径点以选中。",
+    "APPLY": "应用",
+    "DELETE": "删除",
+    "CREATE_PATH": "创建路径",
+    "PENDING_CHANGES": "待保存的更改",
+    "NO_CHANGES": "没有待保存的更改。",
+    "DISCARD": "放弃",
+    "LOADING_TERRAIN": "正在加载地形…",
+    "LOADING_SPAWNS": "正在加载刷新点…",
+    "ERROR_DESKTOP_ONLY": "3D世界编辑器需要 Keira3 桌面应用来读取你的 WoW 客户端文件。",
+    "CONTROLS_HELP": "左键拖动：平移 · 右键拖动：旋转 · 滚轮：缩放 · R：移动/旋转 · Del：删除 · Esc：取消"
   }
 }

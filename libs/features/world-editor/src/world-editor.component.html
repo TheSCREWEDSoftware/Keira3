@@ -1,0 +1,307 @@
+<div class="world-editor container-fluid">
+  <div class="world-editor-toolbar d-flex flex-wrap align-items-center gap-2 mb-2">
+    <select class="form-select form-select-sm map-select" data-testid="map-select" [value]="mapId()" (change)="onMapChange($event)">
+      @for (map of maps(); track map.id) {
+        <option [value]="map.id" [selected]="map.id === mapId()">{{ map.id }} – {{ map.name }}</option>
+      }
+    </select>
+
+    <form class="d-flex gap-1" (submit)="$event.preventDefault(); searchTele()">
+      <input
+        class="form-control form-control-sm"
+        data-testid="tele-search"
+        [formControl]="teleSearch"
+        [placeholder]="'WORLD_EDITOR.TELEPORT_PLACEHOLDER' | translate"
+      />
+      <button type="submit" class="btn btn-sm btn-secondary" data-testid="tele-search-btn"><i class="fa fa-search"></i></button>
+    </form>
+
+    <form class="d-flex gap-1 goto-form" [formGroup]="goToForm" (ngSubmit)="goToCoordinates()">
+      <input type="number" class="form-control form-control-sm" data-testid="goto-x" formControlName="x" placeholder="X" />
+      <input type="number" class="form-control form-control-sm" data-testid="goto-y" formControlName="y" placeholder="Y" />
+      <input type="number" class="form-control form-control-sm" data-testid="goto-z" formControlName="z" placeholder="Z" />
+      <button type="submit" class="btn btn-sm btn-secondary" data-testid="goto-btn">{{ 'WORLD_EDITOR.GO_TO' | translate }}</button>
+    </form>
+
+    <div class="btn-group btn-group-sm" role="group">
+      <button
+        type="button"
+        class="btn"
+        data-testid="layer-creatures"
+        [class.btn-warning]="layers().creatures"
+        [class.btn-outline-warning]="!layers().creatures"
+        (click)="toggleLayer('creatures')"
+      >
+        {{ 'WORLD_EDITOR.CREATURES' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn"
+        data-testid="layer-gameobjects"
+        [class.btn-info]="layers().gameobjects"
+        [class.btn-outline-info]="!layers().gameobjects"
+        (click)="toggleLayer('gameobjects')"
+      >
+        {{ 'WORLD_EDITOR.GAMEOBJECTS' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn"
+        data-testid="layer-waypoints"
+        [class.btn-danger]="layers().waypoints"
+        [class.btn-outline-danger]="!layers().waypoints"
+        (click)="toggleLayer('waypoints')"
+      >
+        {{ 'WORLD_EDITOR.WAYPOINTS' | translate }}
+      </button>
+    </div>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" data-testid="settings-toggle" (click)="toggleSettings()">
+      <i class="fa fa-cog"></i> {{ 'WORLD_EDITOR.SETTINGS' | translate }}
+    </button>
+  </div>
+
+  @if (teleResults().length) {
+    <div class="list-group tele-results mb-2" data-testid="tele-results">
+      @for (tele of teleResults(); track tele.id) {
+        <button
+          type="button"
+          class="list-group-item list-group-item-action py-1"
+          [attr.data-testid]="'tele-' + tele.id"
+          (click)="goToTele(tele)"
+        >
+          {{ tele.name }} <small class="text-muted">(map {{ tele.map }})</small>
+        </button>
+      }
+    </div>
+  }
+
+  @if (showSettings()) {
+    <form class="card card-body mb-2 world-editor-settings" data-testid="settings" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+      <div class="mb-2">
+        <label class="form-label" for="world-editor-client-path">{{ 'WORLD_EDITOR.CLIENT_PATH' | translate }}</label>
+        <input
+          id="world-editor-client-path"
+          class="form-control form-control-sm"
+          data-testid="client-path"
+          formControlName="clientPath"
+          placeholder="C:\Games\World of Warcraft 3.3.5a"
+        />
+        <small class="form-text text-muted">{{ 'WORLD_EDITOR.CLIENT_PATH_HELP' | translate }}</small>
+      </div>
+      <div class="mb-2">
+        <label class="form-label" for="world-editor-server-path">{{ 'WORLD_EDITOR.SERVER_DATA_PATH' | translate }}</label>
+        <input
+          id="world-editor-server-path"
+          class="form-control form-control-sm"
+          data-testid="server-data-path"
+          formControlName="serverDataPath"
+          placeholder="C:\AzerothCore\bin\Data"
+        />
+        <small class="form-text text-muted">{{ 'WORLD_EDITOR.SERVER_DATA_PATH_HELP' | translate }}</small>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-sm btn-primary" data-testid="settings-save">{{ 'WORLD_EDITOR.SAVE' | translate }}</button>
+      </div>
+    </form>
+  }
+
+  <div class="world-editor-body">
+    <div class="world-editor-view">
+      <keira-world-viewer
+        [mapDirectory]="mapDirectory()"
+        [spawns]="worldSpawns()"
+        [paths]="worldPaths()"
+        [selectedKey]="selectedKey()"
+        [editableKey]="editableKey()"
+        [gizmoMode]="gizmoMode()"
+        [snapToGround]="snapToGround()"
+        [focus]="focus()"
+        (picked)="onPicked($event)"
+        (objectMoved)="onObjectMoved($event)"
+        (centerChanged)="onCenterChanged($event)"
+      />
+      @if (loadingSpawns()) {
+        <span class="badge bg-dark world-editor-loading" data-testid="loading-spawns">{{ 'WORLD_EDITOR.LOADING_SPAWNS' | translate }}</span>
+      }
+      <div class="world-editor-help small">{{ 'WORLD_EDITOR.CONTROLS_HELP' | translate }}</div>
+    </div>
+
+    <div class="world-editor-panel">
+      <div class="card mb-2">
+        <div class="card-header py-1">{{ 'WORLD_EDITOR.TOOLS' | translate }}</div>
+        <div class="card-body p-2">
+          <div class="btn-group btn-group-sm w-100 mb-2" role="group">
+            @for (option of ['select', 'place-creature', 'place-gameobject', 'add-waypoint']; track option) {
+              <button
+                type="button"
+                class="btn"
+                [attr.data-testid]="'tool-' + option"
+                [class.btn-primary]="tool() === option"
+                [class.btn-outline-primary]="tool() !== option"
+                (click)="setTool($any(option))"
+              >
+                {{ 'WORLD_EDITOR.TOOL.' + option | translate }}
+              </button>
+            }
+          </div>
+
+          @if (tool() === 'place-creature' || tool() === 'place-gameobject') {
+            <div class="input-group input-group-sm mb-1">
+              <span class="input-group-text">{{ 'WORLD_EDITOR.ENTRY' | translate }}</span>
+              <input
+                type="number"
+                class="form-control"
+                data-testid="place-entry"
+                [formControl]="placeEntry"
+                (change)="onPlaceEntryChange()"
+              />
+            </div>
+            <small class="text-muted" data-testid="place-entry-name">{{
+              placeEntryName() || ('WORLD_EDITOR.PLACE_HINT' | translate)
+            }}</small>
+          }
+
+          @if (tool() === 'add-waypoint') {
+            <small class="text-muted" data-testid="waypoint-hint">
+              @if (activePathId()) {
+                {{ 'WORLD_EDITOR.ADD_WAYPOINT_HINT' | translate: { path: activePathId() } }}
+              } @else {
+                {{ 'WORLD_EDITOR.NO_ACTIVE_PATH' | translate }}
+              }
+            </small>
+          }
+
+          @if (tool() === 'select') {
+            <div class="d-flex gap-1 align-items-center">
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn"
+                  data-testid="gizmo-translate"
+                  [class.btn-secondary]="gizmoMode() === 'translate'"
+                  [class.btn-outline-secondary]="gizmoMode() !== 'translate'"
+                  (click)="setGizmoMode('translate')"
+                >
+                  <i class="fa fa-arrows-alt"></i> {{ 'WORLD_EDITOR.MOVE' | translate }}
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  data-testid="gizmo-rotate"
+                  [class.btn-secondary]="gizmoMode() === 'rotate'"
+                  [class.btn-outline-secondary]="gizmoMode() !== 'rotate'"
+                  (click)="setGizmoMode('rotate')"
+                >
+                  <i class="fa fa-sync-alt"></i> {{ 'WORLD_EDITOR.ROTATE' | translate }}
+                </button>
+              </div>
+              <div class="form-check form-switch ms-2 mb-0">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="world-editor-snap"
+                  data-testid="snap-toggle"
+                  [checked]="snapToGround()"
+                  (change)="toggleSnap()"
+                />
+                <label class="form-check-label small" for="world-editor-snap">{{ 'WORLD_EDITOR.SNAP' | translate }}</label>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card mb-2">
+        <div class="card-header py-1">{{ 'WORLD_EDITOR.SELECTION' | translate }}</div>
+        <div class="card-body p-2" data-testid="selection">
+          @if (selectedSpawn(); as spawn) {
+            <div class="mb-1" data-testid="selected-title">
+              <strong>{{ spawn.name || spawn.entry }}</strong>
+              <span class="text-muted"> · {{ spawn.type }} {{ spawn.guid }} · entry {{ spawn.entry }}</span>
+              @if (spawn.pathId) {
+                <span class="badge bg-danger ms-1">path {{ spawn.pathId }}</span>
+              }
+            </div>
+          } @else if (selectedWaypoint(); as waypoint) {
+            <div class="mb-1" data-testid="selected-title">
+              <strong>Path {{ waypoint.pathId }}</strong> <span class="text-muted">· point {{ waypoint.point }}</span>
+            </div>
+          } @else {
+            <small class="text-muted" data-testid="nothing-selected">{{ 'WORLD_EDITOR.NOTHING_SELECTED' | translate }}</small>
+          }
+
+          @if (selectedSpawn() || selectedWaypoint()) {
+            <form class="placement-form" [formGroup]="placementForm" (ngSubmit)="applyPlacementForm()">
+              <div class="row g-1 mb-1">
+                @for (field of ['x', 'y', 'z', 'o']; track field) {
+                  <div class="col-6" [hidden]="field === 'o' && !selectedSpawn()">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text">{{ field }}</span>
+                      <input
+                        type="number"
+                        step="any"
+                        class="form-control"
+                        [attr.data-testid]="'placement-' + field"
+                        [formControlName]="field"
+                      />
+                    </div>
+                  </div>
+                }
+              </div>
+              <div class="d-flex gap-1 flex-wrap">
+                <button type="submit" class="btn btn-sm btn-primary" data-testid="placement-apply">
+                  {{ 'WORLD_EDITOR.APPLY' | translate }}
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" data-testid="delete-selected" (click)="deleteSelected()">
+                  <i class="fa fa-trash"></i> {{ 'WORLD_EDITOR.DELETE' | translate }}
+                </button>
+                @if (selectedSpawn()?.type === 'creature' && !selectedSpawn()?.pathId) {
+                  <button type="button" class="btn btn-sm btn-outline-danger" data-testid="create-path" (click)="createPath()">
+                    {{ 'WORLD_EDITOR.CREATE_PATH' | translate }}
+                  </button>
+                }
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header py-1">
+          {{ 'WORLD_EDITOR.PENDING_CHANGES' | translate }}
+          <span class="badge bg-secondary" data-testid="pending-count">{{ pendingDescriptions().length }}</span>
+        </div>
+        <div class="card-body p-2">
+          @if (pendingDescriptions().length) {
+            <ul class="pending-list small mb-2" data-testid="pending-list">
+              @for (line of pendingDescriptions(); track $index) {
+                <li>{{ line }}</li>
+              }
+            </ul>
+            <keira-highlightjs-wrapper [code]="pendingSql()" data-testid="pending-sql" />
+            <div class="d-flex gap-1 mt-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-testid="copy-sql" (click)="copySql()">
+                <i class="fa fa-copy"></i> {{ 'COPY' | translate }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                data-testid="execute-sql"
+                [disabled]="executing()"
+                (click)="executeSql()"
+              >
+                <i class="fa fa-bolt"></i> {{ 'EXECUTE' | translate }}
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger ms-auto" data-testid="discard-changes" (click)="discardChanges()">
+                {{ 'WORLD_EDITOR.DISCARD' | translate }}
+              </button>
+            </div>
+          } @else {
+            <small class="text-muted" data-testid="no-changes">{{ 'WORLD_EDITOR.NO_CHANGES' | translate }}</small>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
