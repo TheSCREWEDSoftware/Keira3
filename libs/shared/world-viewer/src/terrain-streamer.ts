@@ -17,6 +17,7 @@ export class TerrainStreamer {
   private available = new Map<string, TileCoord>();
   private readonly loading = new Set<string>();
   private generation = 0;
+  private centerTile: TileCoord = { tx: 32, ty: 32 };
 
   constructor(
     private readonly source: TerrainSource,
@@ -35,6 +36,13 @@ export class TerrainStreamer {
 
   get pendingCount(): number {
     return this.loading.size;
+  }
+
+  /** Stops adding tiles that are still loading (e.g. when the view is destroyed). */
+  dispose(): void {
+    this.generation++;
+    this.directory = undefined;
+    this.loading.clear();
   }
 
   async setMap(directory: string | undefined): Promise<void> {
@@ -59,10 +67,11 @@ export class TerrainStreamer {
     }
     const generation = this.generation;
     const centerTile = worldToTile(center.x, center.y);
+    this.centerTile = centerTile;
 
     for (const key of this.scene.terrainKeys) {
       const [tx, ty] = key.split('_').map(Number);
-      if (Math.max(Math.abs(tx - centerTile.tx), Math.abs(ty - centerTile.ty)) > this.radius + 1) {
+      if (!this.isNear({ tx, ty })) {
         this.scene.removeTerrainTile(key);
       }
     }
@@ -78,7 +87,7 @@ export class TerrainStreamer {
           this.source.getTerrain(directory, tile),
           this.source.getMinimap(directory, tile).catch(() => undefined),
         ]);
-        if (mesh && generation === this.generation) {
+        if (mesh && generation === this.generation && this.isNear(tile)) {
           this.scene.setTerrainTile(mesh, image);
           this.onTileLoaded();
         }
@@ -88,5 +97,10 @@ export class TerrainStreamer {
         this.loading.delete(key);
       }
     }
+  }
+
+  /** Within `radius + 1` tiles of the latest centre (a tile that finished loading after the camera left is dropped). */
+  private isNear(tile: TileCoord): boolean {
+    return Math.max(Math.abs(tile.tx - this.centerTile.tx), Math.abs(tile.ty - this.centerTile.ty)) <= this.radius + 1;
   }
 }

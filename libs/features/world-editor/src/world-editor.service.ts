@@ -3,8 +3,10 @@ import { MysqlQueryService } from '@keira/shared/db-layer';
 import { WorldPosition } from '@keira/shared/wow-data';
 import { firstValueFrom } from 'rxjs';
 import {
+  preferredPathId,
   SPAWN_LOAD_LIMIT,
   SPAWN_LOAD_RADIUS,
+  Quaternion,
   SpawnRecord,
   SpawnRow,
   SpawnType,
@@ -29,7 +31,10 @@ export class WorldEditorService {
 
     const creatures =
       "SELECT c.guid, c.id AS entry, IFNULL(ct.name, '') AS name, c.map, c.position_x AS x, c.position_y AS y, c.position_z AS z, c.orientation AS o, " +
-      'IF(IFNULL(ca.path_id, 0) <> 0, ca.path_id, IFNULL(cta.path_id, 0)) AS pathId ' +
+      // Like Creature::GetCreatureAddon: an addon row (even with path_id 0) wins over the template addon as a whole.
+      'IF(ca.guid IS NOT NULL, ca.path_id, IFNULL(cta.path_id, 0)) AS pathId, ' +
+      '(ca.guid IS NULL AND IFNULL(cta.path_id, 0) <> 0) AS pathFromTemplate, ' +
+      '0 AS rotation0, 0 AS rotation1, 0 AS rotation2, 0 AS rotation3 ' +
       'FROM creature c ' +
       'LEFT JOIN creature_template ct ON ct.entry = c.id ' +
       'LEFT JOIN creature_addon ca ON ca.guid = c.guid ' +
@@ -38,7 +43,7 @@ export class WorldEditorService {
 
     const gameobjects =
       "SELECT g.guid, g.id AS entry, IFNULL(gt.name, '') AS name, g.map, g.position_x AS x, g.position_y AS y, g.position_z AS z, g.orientation AS o, " +
-      '0 AS pathId ' +
+      '0 AS pathId, 0 AS pathFromTemplate, g.rotation0, g.rotation1, g.rotation2, g.rotation3 ' +
       'FROM gameobject g ' +
       'LEFT JOIN gameobject_template gt ON gt.entry = g.id ' +
       `WHERE ${area('g')} LIMIT ${SPAWN_LOAD_LIMIT}`;
@@ -70,6 +75,21 @@ export class WorldEditorService {
     }));
   }
 
+  /**
+   * Id for a new path of a creature: `guid * 10` (AzerothCore's convention) when unused, otherwise the highest path id
+   * + 1 (what `.wp add` does). `reserved` are ids already handed out in this session but not saved yet.
+   */
+  async getFreePathId(guid: number, reserved: number[] = []): Promise<number> {
+    const preferred = preferredPathId(guid);
+    const rows = await firstValueFrom(
+      this.queryService.query<{ used: number; max: number }>(
+        `SELECT (SELECT COUNT(*) FROM waypoint_data WHERE id = ${preferred}) AS used, (SELECT IFNULL(MAX(id), 0) FROM waypoint_data) AS max`,
+      ),
+    );
+    const used = Number(rows?.[0]?.used ?? 0) > 0 || reserved.includes(preferred);
+    return used ? Math.max(Number(rows?.[0]?.max ?? 0), ...reserved) + 1 : preferred;
+  }
+
   async getMaxGuid(type: SpawnType): Promise<number> {
     const rows = await firstValueFrom(this.queryService.getMaxId(type === 'creature' ? 'creature' : 'gameobject', 'guid'));
     return Number(rows?.[0]?.max ?? 0);
@@ -96,6 +116,10 @@ export class WorldEditorService {
 
 function toSpawns(type: SpawnType, rows: SpawnRow[] | undefined): SpawnRecord[] {
   return (rows ?? []).map((row) => ({
+    ...(type === 'gameobject'
+      ? { rotation: [Number(row.rotation0), Number(row.rotation1), Number(row.rotation2), Number(row.rotation3)] as Quaternion }
+      : {}),
+    ...(Number(row.pathFromTemplate) ? { pathFromTemplate: true } : {}),
     type,
     guid: Number(row.guid),
     entry: Number(row.entry),

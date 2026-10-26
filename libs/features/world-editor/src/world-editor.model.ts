@@ -13,9 +13,15 @@ export interface SpawnRecord {
   y: number;
   z: number;
   o: number;
-  /** Waypoint path (creature_addon.path_id, falling back to creature_template_addon.path_id), 0 if none. */
+  /** Waypoint path (creature_addon.path_id, or creature_template_addon.path_id when there is no addon row), 0 if none. */
   pathId: number;
+  /** The path comes from creature_template_addon, so it is shared by every creature of this entry. */
+  pathFromTemplate?: boolean;
+  /** gameobject.rotation0..3 (x, y, z, w quaternion; all 0 = derived from orientation). */
+  rotation?: Quaternion;
 }
+
+export type Quaternion = [number, number, number, number];
 
 export interface WaypointRecord {
   pathId: number;
@@ -52,6 +58,11 @@ export interface SpawnRow extends TableRow {
   z: number;
   o: number;
   pathId: number;
+  pathFromTemplate: number;
+  rotation0: number;
+  rotation1: number;
+  rotation2: number;
+  rotation3: number;
 }
 
 export interface WaypointRow extends TableRow {
@@ -80,8 +91,8 @@ export function parseSpawnKey(key: string): { type: SpawnType; guid: number } | 
   return match ? { type: match[1] as SpawnType, guid: Number(match[2]) } : undefined;
 }
 
-/** Paths conventionally use `guid * 10` as id (as the in-game `.wp` commands do). */
-export const defaultPathId = (guid: number): number => guid * 10;
+/** Preferred id for a new path: AzerothCore's data conventionally uses `guid * 10`. */
+export const preferredPathId = (guid: number): number => guid * 10;
 
 /** Half-size of the square (in yards) around the camera whose spawns are loaded. */
 export const SPAWN_LOAD_RADIUS = 450;

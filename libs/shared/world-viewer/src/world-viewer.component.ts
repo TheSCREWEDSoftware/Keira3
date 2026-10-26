@@ -19,7 +19,7 @@ import { MapControls } from 'three/addons/controls/MapControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { TerrainStreamer } from './terrain-streamer';
 import { WORLD_RENDERER_FACTORY, WorldRenderer } from './world-renderer';
-import { WorldScene } from './world-scene';
+import { PickOptions, WorldScene } from './world-scene';
 import { GizmoMode, ObjectMoved, parseWaypointKey, PickResult, WaypointPath, WorldSpawn } from './world-viewer.model';
 
 const CLICK_TOLERANCE_PX = 4;
@@ -82,6 +82,7 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
   private frameRequested = false;
   private pointerDown?: { x: number; y: number };
   private lastEmittedCenter?: WorldPosition;
+  private hoverEvent?: PointerEvent;
   /** Camera target in scene space, shared with the map controls. */
   private readonly target = new Vector3();
 
@@ -140,6 +141,7 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.streamer.dispose();
     this.resizeObserver?.disconnect();
     this.gizmo.detach();
     this.gizmo.dispose();
@@ -181,7 +183,7 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
     if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > CLICK_TOLERANCE_PX) {
       return;
     }
-    const result = this.pickAt(event, this.groundOnly());
+    const result = this.pickAt(event, { groundOnly: this.groundOnly() });
     if (result) {
       this.picked.emit(result);
     }
@@ -192,24 +194,36 @@ export class WorldViewerComponent implements AfterViewInit, OnDestroy {
       this.hoverLabel.set(undefined);
       return;
     }
-    const result = this.pickAt(event);
-    const text = result && result.type !== 'ground' ? this.labelFor(result.key) : undefined;
+    // Hover picking is throttled to one per frame and only tests markers.
+    const pending = this.hoverEvent;
+    this.hoverEvent = event;
+    if (!pending) {
+      requestAnimationFrame(() => this.updateHover());
+    }
+  }
+
+  private updateHover(): void {
+    const event = this.hoverEvent as PointerEvent;
+    this.hoverEvent = undefined;
+    const result = this.pickAt(event, { markersOnly: true });
+    const text = result ? this.labelFor((result as { key: string }).key) : undefined;
     const rect = this.host().nativeElement.getBoundingClientRect();
     this.hoverLabel.set(text ? { text, x: event.clientX - rect.left + 14, y: event.clientY - rect.top + 14 } : undefined);
   }
 
   protected onPointerLeave(): void {
+    this.hoverEvent = undefined;
     this.hoverLabel.set(undefined);
   }
 
-  private pickAt(event: PointerEvent, groundOnly = false): PickResult | undefined {
+  private pickAt(event: PointerEvent, options: PickOptions = {}): PickResult | undefined {
     const rect = this.canvasRef().nativeElement.getBoundingClientRect();
     if (!rect.width || !rect.height) {
       return undefined;
     }
     const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    return this.world.pick(x, y, undefined, groundOnly);
+    return this.world.pick(x, y, options);
   }
 
   private labelFor(key: string): string {

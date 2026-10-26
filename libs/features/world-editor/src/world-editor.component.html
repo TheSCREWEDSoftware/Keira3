@@ -221,7 +221,9 @@
               <strong>{{ spawn.name || spawn.entry }}</strong>
               <span class="text-muted"> · {{ spawn.type }} {{ spawn.guid }} · entry {{ spawn.entry }}</span>
               @if (spawn.pathId) {
-                <span class="badge bg-danger ms-1">path {{ spawn.pathId }}</span>
+                <span class="badge bg-danger ms-1" data-testid="selected-path"
+                  >path {{ spawn.pathId }}{{ spawn.pathFromTemplate ? ' (template)' : '' }}</span
+                >
               }
             </div>
           } @else if (selectedWaypoint(); as waypoint) {

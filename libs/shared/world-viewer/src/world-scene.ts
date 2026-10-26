@@ -44,6 +44,13 @@ import { PickResult, SpawnKind, WaypointPath, waypointKey, WorldSpawn } from './
 
 type MarkerState = 'normal' | 'pending' | 'selected';
 
+export interface PickOptions {
+  /** How far (in normalised device units) from the cursor a marker may be and still be picked. */
+  tolerance?: number;
+  groundOnly?: boolean;
+  markersOnly?: boolean;
+}
+
 interface PickableData {
   key: string;
   kind: SpawnKind | 'waypoint';
@@ -267,9 +274,10 @@ export class WorldScene {
   /**
    * Picks at normalised device coordinates (−1..1): markers hit by the ray first, then the marker nearest to the
    * cursor within `tolerance` (in NDC units, so small far-away markers stay clickable), then the ground.
-   * With `groundOnly`, markers are ignored (used when placing things on the terrain).
+   * `groundOnly` ignores markers (placing things on the terrain); `markersOnly` skips the terrain (hover labels).
    */
-  pick(ndcX: number, ndcY: number, tolerance = 0.03, groundOnly = false): PickResult | undefined {
+  pick(ndcX: number, ndcY: number, options: PickOptions = {}): PickResult | undefined {
+    const { tolerance = 0.03, groundOnly = false, markersOnly = false } = options;
     this.camera.updateMatrixWorld();
     this.updateMarkerScale();
     this.scene.updateMatrixWorld();
@@ -287,7 +295,7 @@ export class WorldScene {
         : { type: 'spawn', key: data.key, position: state.position };
     }
 
-    const groundHit = this.raycaster.intersectObject(this.terrainGroup, true)[0];
+    const groundHit = markersOnly ? undefined : this.raycaster.intersectObject(this.terrainGroup, true)[0];
     return groundHit ? { type: 'ground', position: sceneToWorld(groundHit.point) } : undefined;
   }
 

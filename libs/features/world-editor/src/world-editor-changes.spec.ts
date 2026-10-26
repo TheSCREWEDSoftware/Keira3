@@ -1,4 +1,4 @@
-import { gameobjectRotation, WorldEditorChanges } from './world-editor-changes';
+import { gameobjectRotation, rotateGameobject, WorldEditorChanges } from './world-editor-changes';
 import { SpawnRecord, WaypointRecord } from './world-editor.model';
 
 const creature = (guid: number, extra: Partial<SpawnRecord> = {}): SpawnRecord => ({
@@ -37,6 +37,25 @@ describe('gameobjectRotation', () => {
   });
 });
 
+describe('rotateGameobject', () => {
+  it('applies the yaw change on top of the stored rotation, keeping the tilt', () => {
+    // tilted 0.2 rad around x, then turned a quarter around z
+    const tilted: [number, number, number, number] = [Math.sin(0.1), 0, 0, Math.cos(0.1)];
+    const turned = rotateGameobject(tilted, 0, Math.PI / 2);
+    const s = Math.sin(Math.PI / 4);
+    const c = Math.cos(Math.PI / 4);
+    expect(turned.rotation0).toBeCloseTo(c * Math.sin(0.1), 4);
+    expect(turned.rotation1).toBeCloseTo(s * Math.sin(0.1), 4);
+    expect(turned.rotation2).toBeCloseTo(s * Math.cos(0.1), 4);
+    expect(turned.rotation3).toBeCloseTo(c * Math.cos(0.1), 4);
+  });
+
+  it('starts from the orientation when no rotation is stored', () => {
+    expect(rotateGameobject([0, 0, 0, 0], 1, 2)).toEqual(gameobjectRotation(2));
+    expect(rotateGameobject(undefined, 0, Math.PI)).toEqual(gameobjectRotation(Math.PI));
+  });
+});
+
 describe('WorldEditorChanges', () => {
   it('starts empty', () => {
     const changes = new WorldEditorChanges();
@@ -64,7 +83,8 @@ describe('WorldEditorChanges', () => {
       changes.placeSpawn(gameobject(5, { o: Math.PI }));
       expect(changes.describe()).toEqual(['Place gameobject 5']);
       expect(changes.toSql()).toContain('INSERT INTO `gameobject`');
-      expect(changes.toSql()).toContain('3.1416, 0, 0, 1, 0, 300');
+      // orientation, rotation0..3, spawntimesecs, animprogress, state (GO_STATE_READY)
+      expect(changes.toSql()).toContain('3.1416, 0, 0, 1, 0, 300, 0, 1,');
     });
 
     it('updates the insert when a new spawn is moved, and drops it when deleted', () => {
@@ -76,6 +96,14 @@ describe('WorldEditorChanges', () => {
 
       changes.deleteSpawn(creature(100));
       expect(changes.count).toBe(0);
+    });
+
+    it('only rewrites a moved gameobject rotation when its orientation changed', () => {
+      const changes = new WorldEditorChanges();
+      changes.moveSpawn(gameobject(5, { rotation: [0.1, 0, 0, 0.995] }), { x: 4, y: 5, z: 6, o: 0 });
+      expect(changes.toSql()).toBe(
+        'UPDATE `gameobject` SET `position_x` = 4, `position_y` = 5, `position_z` = 6, `orientation` = 0 WHERE (`guid` = 5);',
+      );
     });
 
     it('updates moved spawns, keeping the original until moved back', () => {
@@ -91,7 +119,17 @@ describe('WorldEditorChanges', () => {
       expect(changes.count).toBe(0);
     });
 
-    it('deletes spawns (and their addon) using the original data', () => {
+    it('drops the waypoints queued for the new path of a deleted creature', () => {
+      const changes = new WorldEditorChanges();
+      changes.placeSpawn(creature(100));
+      changes.createPath(100, 1000);
+      changes.addWaypoint(waypoint(1000, 1));
+      changes.addWaypoint(waypoint(80, 1));
+      changes.deleteSpawn(creature(100));
+      expect(changes.describe()).toEqual(['Add waypoint 80 #1']);
+    });
+
+    it('deletes spawns (and their related rows, like the server does) using the original data', () => {
       const changes = new WorldEditorChanges();
       changes.moveSpawn(creature(7), { x: 9, y: 9, z: 9, o: 0 });
       changes.createPath(7, 70);
@@ -101,8 +139,12 @@ describe('WorldEditorChanges', () => {
       expect(changes.toSql().split('\n')).toEqual([
         'DELETE FROM `creature` WHERE (`guid` = 7);',
         'DELETE FROM `creature_addon` WHERE (`guid` = 7);',
+        'DELETE FROM `creature_multispawn` WHERE (`spawnId` = 7);',
+        'DELETE FROM `game_event_creature` WHERE (`guid` = 7);',
+        'DELETE FROM `game_event_model_equip` WHERE (`guid` = 7);',
         'DELETE FROM `gameobject` WHERE (`guid` = 8);',
         'DELETE FROM `gameobject_addon` WHERE (`guid` = 8);',
+        'DELETE FROM `game_event_gameobject` WHERE (`guid` = 8);',
       ]);
     });
 
@@ -204,6 +246,9 @@ describe('WorldEditorChanges', () => {
     expect(kinds).toEqual([
       'DELETE FROM `creature`',
       'DELETE FROM `creature_addon`',
+      'DELETE FROM `creature_multispawn`',
+      'DELETE FROM `game_event_creature`',
+      'DELETE FROM `game_event_model_equip`',
       'INSERT INTO `creature`',
       'UPDATE `creature` SET',
       'INSERT INTO `creature_addon`',

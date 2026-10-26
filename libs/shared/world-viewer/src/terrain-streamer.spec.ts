@@ -113,4 +113,29 @@ describe('TerrainStreamer', () => {
     await Promise.all([switching, stale]);
     expect(streamer.availableTiles).toEqual([{ tx: 32, ty: 48 }]);
   });
+
+  it('drops tiles that finish loading after the camera moved away or after dispose', async () => {
+    const { streamer, scene, source } = setup([
+      { tx: 32, ty: 48 },
+      { tx: 50, ty: 48 },
+    ]);
+    const resolvers: ((mesh: TerrainMeshData) => void)[] = [];
+    vi.mocked(source.getTerrain).mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
+    await streamer.setMap('Azeroth');
+
+    const first = streamer.update(tileCenter({ tx: 32, ty: 48 }));
+    await Promise.resolve();
+    const second = streamer.update(tileCenter({ tx: 50, ty: 48 }));
+    await Promise.resolve();
+    resolvers[0](mesh({ tx: 32, ty: 48 }));
+    await first;
+    expect(scene.terrainKeys).toEqual([]);
+
+    streamer.dispose();
+    resolvers[1](mesh({ tx: 50, ty: 48 }));
+    await second;
+    expect(scene.terrainKeys).toEqual([]);
+    expect(streamer.mapDirectory).toBeUndefined();
+    expect(streamer.pendingCount).toBe(0);
+  });
 });

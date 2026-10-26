@@ -18,7 +18,6 @@ import { ClipboardService } from 'ngx-clipboard';
 import { ToastrService } from 'ngx-toastr';
 import { WorldEditorChanges } from './world-editor-changes';
 import {
-  defaultPathId,
   EditorTool,
   LayerVisibility,
   parseSpawnKey,
@@ -76,7 +75,10 @@ export class WorldEditorComponent implements OnInit {
   private readonly loadedWaypoints = signal<WaypointRecord[]>([]);
   private center?: WorldPosition;
   private spawnRequest = 0;
-  private readonly nextGuids = new Map<SpawnType, number>();
+  /** Last guid handed out per type, chained so quick consecutive placements never get the same guid. */
+  private readonly nextGuids = new Map<SpawnType, Promise<number>>();
+  /** Path ids handed out to new paths in this session (not saved yet). */
+  private reservedPathIds: number[] = [];
 
   protected readonly spawns = computed(() => {
     this.revision();
@@ -133,6 +135,16 @@ export class WorldEditorComponent implements OnInit {
 
   /** Path new waypoints are appended to: the selected waypoint's path, or the selected creature's. */
   protected readonly activePathId = computed(() => this.selectedWaypoint()?.pathId ?? this.selectedSpawn()?.pathId ?? 0);
+
+  /** Paths coming from creature_template_addon: shared by every creature of an entry. */
+  private readonly templatePathIds = computed(
+    () =>
+      new Set(
+        this.spawns()
+          .filter((s) => s.pathFromTemplate)
+          .map((s) => s.pathId),
+      ),
+  );
 
   protected readonly editableKey = computed(() =>
     this.tool() === 'select' && (this.selectedSpawn() || this.selectedWaypoint()) ? this.selectedKey() : undefined,
@@ -236,6 +248,11 @@ export class WorldEditorComponent implements OnInit {
   }
 
   protected goToTele(tele: TeleRow): void {
+    if (Number(tele.map) !== this.mapId()) {
+      this.selectedKey.set(undefined);
+      this.loadedSpawns.set([]);
+      this.loadedWaypoints.set([]);
+    }
     this.mapId.set(Number(tele.map));
     this.focus.set({ x: Number(tele.x), y: Number(tele.y), z: Number(tele.z) });
     this.teleResults.set([]);
@@ -273,7 +290,10 @@ export class WorldEditorComponent implements OnInit {
         return;
       }
       this.loadedSpawns.set(spawns);
-      this.loadedWaypoints.set(await this.service.loadWaypoints(this.pathIds()));
+      const waypoints = await this.service.loadWaypoints(this.pathIds());
+      if (request === this.spawnRequest) {
+        this.loadedWaypoints.set(waypoints);
+      }
     } catch (error) {
       this.toastr.error((error as Error).message, 'World Editor');
     } finally {
@@ -341,9 +361,9 @@ export class WorldEditorComponent implements OnInit {
       this.toastr.warning(`Enter the ${type} entry to place first.`, 'World Editor');
       return;
     }
-    const known = this.nextGuids.get(type);
-    const guid = known ?? (await this.service.getMaxGuid(type)) + 1;
-    this.nextGuids.set(type, guid + 1);
+    const next = (this.nextGuids.get(type) ?? this.service.getMaxGuid(type)).then((last) => last + 1);
+    this.nextGuids.set(type, next);
+    const guid = await next;
     const name = await this.service.getEntryName(type, entry);
     this.changes.placeSpawn({ type, guid, entry, name, map: this.mapId(), ...position, o: 0, pathId: 0 });
     this.bump();
@@ -354,6 +374,13 @@ export class WorldEditorComponent implements OnInit {
     const pathId = this.activePathId();
     if (!pathId) {
       this.toastr.warning('Select a creature with a path (or create one) before adding waypoints.', 'World Editor');
+      return;
+    }
+    if (this.templatePathIds().has(pathId)) {
+      this.toastr.warning(
+        `Path ${pathId} comes from creature_template_addon and is shared by every creature of this entry; edit it in the creature template instead.`,
+        'World Editor',
+      );
       return;
     }
     const points = this.waypoints().filter((w) => w.pathId === pathId);
@@ -402,9 +429,11 @@ export class WorldEditorComponent implements OnInit {
   }
 
   /** Only offered for a selected creature without a path. */
-  protected createPath(): void {
+  protected async createPath(): Promise<void> {
     const spawn = this.selectedSpawn() as SpawnRecord;
-    this.changes.createPath(spawn.guid, defaultPathId(spawn.guid));
+    const pathId = await this.service.getFreePathId(spawn.guid, this.reservedPathIds);
+    this.reservedPathIds = [...this.reservedPathIds, pathId];
+    this.changes.createPath(spawn.guid, pathId);
     this.bump();
     this.tool.set('add-waypoint');
   }
@@ -415,17 +444,19 @@ export class WorldEditorComponent implements OnInit {
     this.clipboard.copyFromContent(this.pendingSql());
   }
 
-  /** Only offered while there are pending changes. */
+  /**
+   * Runs the pending SQL in one transaction, so a failing statement leaves the database untouched (Keira uses a single
+   * connection, so the ROLLBACK reaches the same session). Only offered while there are pending changes.
+   */
   protected async executeSql(): Promise<void> {
     this.executing.set(true);
     try {
-      await this.service.execute(this.pendingSql());
+      await this.service.execute(`START TRANSACTION;\n${this.pendingSql()}\nCOMMIT;`);
       this.toastr.success('Query executed successfully', 'Success');
-      this.changes.clear();
-      this.nextGuids.clear();
-      this.bump();
+      this.clearChanges();
       await this.reloadSpawns();
     } catch (error) {
+      await this.service.execute('ROLLBACK;').catch(() => undefined);
       this.toastr.error((error as { message?: string }).message ?? 'Error when executing the query!', 'Query error');
     } finally {
       this.executing.set(false);
@@ -433,9 +464,14 @@ export class WorldEditorComponent implements OnInit {
   }
 
   protected discardChanges(): void {
+    this.clearChanges();
+    this.selectedKey.set(undefined);
+  }
+
+  private clearChanges(): void {
     this.changes.clear();
     this.nextGuids.clear();
-    this.selectedKey.set(undefined);
+    this.reservedPathIds = [];
     this.bump();
   }
 

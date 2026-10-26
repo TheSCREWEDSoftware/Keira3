@@ -9,14 +9,29 @@ import {
 } from '@keira/shared/acore-world-model';
 import { squelConfig } from '@keira/shared/config';
 import squel from 'squel';
-import { pathKey, Placement, SpawnRecord, spawnKey, SpawnType, WaypointRecord } from './world-editor.model';
+import { pathKey, Placement, Quaternion, SpawnRecord, spawnKey, SpawnType, WaypointRecord } from './world-editor.model';
 
 const round = (value: number): number => Math.round(value * 10_000) / 10_000;
 const NEW_SPAWN_RESPAWN_SECS = 300;
 const MOVEMENT_TYPE_WAYPOINT = 2;
+/** GO_STATE_READY, what `.gobject add` uses (0 would spawn doors open). */
+const NEW_GAMEOBJECT_STATE = 1;
+
+/** Rows referencing a spawn guid that AzerothCore's `DeleteFromDB` removes together with the spawn. */
+const RELATED_ROWS: Record<SpawnType, { table: string; field: string }[]> = {
+  creature: [
+    { table: CREATURE_SPAWN_ADDON_TABLE, field: 'guid' },
+    { table: 'creature_multispawn', field: 'spawnId' },
+    { table: 'game_event_creature', field: 'guid' },
+    { table: 'game_event_model_equip', field: 'guid' },
+  ],
+  gameobject: [
+    { table: GAMEOBJECT_SPAWN_ADDON_TABLE, field: 'guid' },
+    { table: 'game_event_gameobject', field: 'guid' },
+  ],
+};
 
 const tableOf = (type: SpawnType): string => (type === 'creature' ? CREATURE_SPAWN_TABLE : GAMEOBJECT_SPAWN_TABLE);
-const addonTableOf = (type: SpawnType): string => (type === 'creature' ? CREATURE_SPAWN_ADDON_TABLE : GAMEOBJECT_SPAWN_ADDON_TABLE);
 const waypointKey = (pathId: number, point: number): string => `${pathKey(pathId)}#${point}`;
 
 /** Yaw-only quaternion stored in gameobject.rotation0..3 (what `.gobject turn` writes). */
@@ -24,14 +39,38 @@ export function gameobjectRotation(orientation: number): { rotation0: number; ro
   return { rotation0: 0, rotation1: 0, rotation2: round(Math.sin(orientation / 2)), rotation3: round(Math.cos(orientation / 2)) };
 }
 
-function placementFields(type: SpawnType, p: Placement): Record<string, number> {
+/**
+ * Turns a gameobject from orientation `from` to `to`, keeping any tilt: the yaw delta is applied on top of the stored
+ * quaternion (or of the yaw-only one when the stored quaternion is all zeros).
+ */
+export function rotateGameobject(rotation: Quaternion | undefined, from: number, to: number): Record<string, number> {
+  const yaw = gameobjectRotation(from);
+  const [bx, by, bz, bw] = rotation?.some((v) => v !== 0) ? rotation : [yaw.rotation0, yaw.rotation1, yaw.rotation2, yaw.rotation3];
+  const qz = Math.sin((to - from) / 2);
+  const qw = Math.cos((to - from) / 2);
+  return {
+    rotation0: round(qw * bx - qz * by),
+    rotation1: round(qw * by + qz * bx),
+    rotation2: round(qw * bz + qz * bw),
+    rotation3: round(qw * bw - qz * bz),
+  };
+}
+
+/** Columns to write for a placement. Gameobject rotation columns only change when the orientation did. */
+function placementFields(type: SpawnType, p: Placement, original?: SpawnRecord): Record<string, number> {
   const fields: Record<string, number> = {
     position_x: round(p.x),
     position_y: round(p.y),
     position_z: round(p.z),
     orientation: round(p.o),
   };
-  return type === 'gameobject' ? { ...fields, ...gameobjectRotation(p.o) } : fields;
+  if (type !== 'gameobject') {
+    return fields;
+  }
+  if (!original) {
+    return { ...fields, ...gameobjectRotation(p.o) };
+  }
+  return round(original.o) === round(p.o) ? fields : { ...fields, ...rotateGameobject(original.rotation, original.o, p.o) };
 }
 
 const samePlacement = (a: Placement, b: Placement): boolean =>
@@ -100,8 +139,15 @@ export class WorldEditorChanges {
 
   deleteSpawn(spawn: SpawnRecord): void {
     const key = spawnKey(spawn.type, spawn.guid);
-    if (spawn.type === 'creature') {
+    const createdPath = spawn.type === 'creature' ? this.createdPaths.get(spawn.guid) : undefined;
+    if (createdPath !== undefined) {
+      // The path only existed for this creature: drop the points queued for it too.
       this.createdPaths.delete(spawn.guid);
+      for (const [waypointKeyValue, waypoint] of this.insertedWaypoints) {
+        if (waypoint.pathId === createdPath) {
+          this.insertedWaypoints.delete(waypointKeyValue);
+        }
+      }
     }
     if (this.insertedSpawns.delete(key)) {
       return;
@@ -213,13 +259,15 @@ export class WorldEditorChanges {
 
     for (const spawn of this.deletedSpawns.values()) {
       statements.push(this.deleteQuery(tableOf(spawn.type), { guid: spawn.guid }));
-      statements.push(this.deleteQuery(addonTableOf(spawn.type), { guid: spawn.guid }));
+      for (const { table, field } of RELATED_ROWS[spawn.type]) {
+        statements.push(this.deleteQuery(table, { [field]: spawn.guid }));
+      }
     }
     for (const spawn of this.insertedSpawns.values()) {
       statements.push(this.insertSpawnQuery(spawn));
     }
     for (const { original, current } of this.movedSpawns.values()) {
-      statements.push(this.updateQuery(tableOf(original.type), placementFields(original.type, current), { guid: original.guid }));
+      statements.push(this.updateQuery(tableOf(original.type), placementFields(original.type, current, original), { guid: original.guid }));
     }
     for (const [guid, pathId] of this.createdPaths) {
       statements.push(
@@ -259,7 +307,7 @@ export class WorldEditorChanges {
           )
         : Object.assign(
             new GameobjectSpawn(),
-            { guid: spawn.guid, id: spawn.entry, map: spawn.map, spawntimesecs: NEW_SPAWN_RESPAWN_SECS },
+            { guid: spawn.guid, id: spawn.entry, map: spawn.map, spawntimesecs: NEW_SPAWN_RESPAWN_SECS, state: NEW_GAMEOBJECT_STATE },
             placement,
           );
     return `${squel

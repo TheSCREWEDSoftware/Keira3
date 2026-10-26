@@ -1,4 +1,4 @@
-import { defaultPathId, parseSpawnKey, pathKey, spawnKey } from './world-editor.model';
+import { preferredPathId, parseSpawnKey, pathKey, spawnKey } from './world-editor.model';
 
 describe('world editor keys', () => {
   it('builds and parses spawn keys', () => {
@@ -9,6 +9,6 @@ describe('world editor keys', () => {
 
   it('builds path keys and default path ids', () => {
     expect(pathKey(120)).toBe('path:120');
-    expect(defaultPathId(12)).toBe(120);
+    expect(preferredPathId(12)).toBe(120);
   });
 });

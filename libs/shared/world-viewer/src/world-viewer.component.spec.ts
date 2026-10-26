@@ -349,11 +349,18 @@ describe(WorldViewerComponent.name, () => {
       expect(host.picks).toEqual([]);
     });
 
-    it('shows the name of the hovered spawn or waypoint', async () => {
+    it('shows the name of the hovered spawn or waypoint, at most once per frame', async () => {
       const { page, host, fixture, update } = await pickSetup();
       await settle(fixture);
+      const hover = (x: number, y: number): void => {
+        page.pointer('pointermove', x, y);
+        flushFrames();
+        fixture.detectChanges();
+      };
 
+      page.pointer('pointermove', 10, 10);
       page.pointer('pointermove', 50, 50);
+      flushFrames();
       fixture.detectChanges();
       expect(page.label().nativeElement.textContent?.trim()).toBe('Deputy Willem');
       expect(page.label().nativeElement.style.left).toBe('64px');
@@ -363,19 +370,16 @@ describe(WorldViewerComponent.name, () => {
       expect(page.label(false)).toBeFalsy();
 
       await update(() => host.focus.set(at(300, 300)));
-      page.pointer('pointermove', 50, 50);
-      fixture.detectChanges();
+      hover(50, 50);
       expect(page.label().nativeElement.textContent?.trim()).toBe('Path 1 · #3');
 
       page.pointer('pointerdown', 50, 50);
-      page.pointer('pointermove', 52, 52);
-      fixture.detectChanges();
+      hover(52, 52);
       expect(page.label(false)).toBeFalsy();
       page.pointer('pointerup', 52, 52);
 
       await update(() => host.focus.set(at(-100, -100)));
-      page.pointer('pointermove', 50, 50);
-      fixture.detectChanges();
+      hover(50, 50);
       expect(page.label(false)).toBeFalsy();
     });
   });

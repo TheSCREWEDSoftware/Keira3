@@ -98,6 +98,7 @@ describe(WorldEditorComponent.name, () => {
       loadSpawns: vi.fn(),
       loadWaypoints: vi.fn(),
       getMaxGuid: vi.fn(),
+      getFreePathId: vi.fn(),
       getEntryName: vi.fn(),
       searchTele: vi.fn(),
       execute: vi.fn(),
@@ -156,6 +157,7 @@ describe(WorldEditorComponent.name, () => {
     mocks.service.loadSpawns.mockResolvedValue(SPAWNS);
     mocks.service.loadWaypoints.mockResolvedValue(WAYPOINTS);
     mocks.service.getMaxGuid.mockResolvedValue(1000);
+    mocks.service.getFreePathId.mockResolvedValue(20);
     mocks.service.getEntryName.mockResolvedValue('Marshal McBride');
     mocks.service.searchTele.mockResolvedValue([{ id: 7, name: 'Northshire', map: 1, x: 1, y: 2, z: 3 }]);
     mocks.service.execute.mockResolvedValue(undefined);
@@ -537,15 +539,98 @@ describe(WorldEditorComponent.name, () => {
     });
 
     it('creates a path for a creature without one', async () => {
+      mocks.service.loadSpawns.mockResolvedValue([...SPAWNS, spawn('creature', 4)]);
       const { page } = await setup();
       await loadArea(page);
       page.viewer().picked.emit({ type: 'spawn', key: 'creature:2', position: { x: 0, y: 0, z: 0 } });
       await settle(page);
       page.click('create-path');
       await settle(page);
+      expect(mocks.service.getFreePathId).toHaveBeenCalledWith(2, []);
       expect(page.pendingLines()).toEqual(['Create path 20 for creature 2']);
+
       expect(page.text('waypoint-hint')).toContain('WORLD_EDITOR.ADD_WAYPOINT_HINT');
       expect(mocks.service.loadWaypoints).toHaveBeenCalledTimes(1);
+
+      // a second new path in the same session must not reuse the first one's id
+      mocks.service.getFreePathId.mockResolvedValue(41);
+      page.click('tool-select');
+      page.viewer().picked.emit({ type: 'spawn', key: 'creature:4', position: { x: 0, y: 0, z: 0 } });
+      await settle(page);
+      page.click('create-path');
+      await settle(page);
+      expect(mocks.service.getFreePathId).toHaveBeenLastCalledWith(4, [20]);
+      expect(page.pendingLines()).toEqual(['Create path 20 for creature 2', 'Create path 41 for creature 4']);
+    });
+  });
+
+  describe('safety', () => {
+    it('refuses to append to paths shared through creature_template_addon', async () => {
+      mocks.service.loadSpawns.mockResolvedValue([spawn('creature', 5, { pathId: 50, pathFromTemplate: true, name: 'Guard' })]);
+      const { page } = await setup();
+      await loadArea(page);
+      page.viewer().picked.emit({ type: 'spawn', key: 'creature:5', position: { x: 0, y: 0, z: 0 } });
+      await settle(page);
+      expect(page.text('selected-path')).toBe('path 50 (template)');
+      page.click('tool-add-waypoint');
+      page.viewer().picked.emit({ type: 'ground', position: { x: 1, y: 2, z: 3 } });
+      await settle(page);
+      expect(mocks.toastr.warning).toHaveBeenCalledWith(expect.stringContaining('creature_template_addon'), 'World Editor');
+      expect(page.pendingLines()).toEqual([]);
+    });
+
+    it('gives distinct guids to quick consecutive placements', async () => {
+      let resolveMax: (max: number) => void = () => undefined;
+      mocks.service.getMaxGuid.mockReturnValue(new Promise((r) => (resolveMax = r)));
+      const { page } = await setup();
+      await loadArea(page);
+      page.click('tool-place-creature');
+      await settle(page);
+      page.type('place-entry', '197');
+      page.viewer().picked.emit({ type: 'ground', position: { x: 1, y: 2, z: 3 } });
+      page.viewer().picked.emit({ type: 'ground', position: { x: 4, y: 5, z: 6 } });
+      resolveMax(500);
+      await settle(page);
+      expect(mocks.service.getMaxGuid).toHaveBeenCalledTimes(1);
+      expect(page.pendingLines()).toEqual(['Place creature 501 (Marshal McBride)', 'Place creature 502 (Marshal McBride)']);
+    });
+
+    it('ignores waypoints of an older camera position', async () => {
+      const { page } = await setup();
+      let resolveWaypoints: (w: WaypointRecord[]) => void = () => undefined;
+      mocks.service.loadWaypoints.mockReturnValueOnce(new Promise((r) => (resolveWaypoints = r))).mockResolvedValueOnce([]);
+      page.viewer().centerChanged.emit(CENTER);
+      await settle(page);
+      page.viewer().centerChanged.emit({ x: 0, y: 0, z: 0 });
+      await settle(page);
+      resolveWaypoints(WAYPOINTS);
+      await settle(page);
+      expect(page.viewer().paths()).toEqual([]);
+    });
+
+    it('clears the old map when teleporting to another one', async () => {
+      mocks.service.searchTele.mockResolvedValue([
+        { id: 7, name: 'Northshire', map: 0, x: 1, y: 2, z: 3 },
+        { id: 8, name: 'Teldrassil', map: 1, x: 1, y: 2, z: 3 },
+      ]);
+      const { page } = await setup();
+      await loadArea(page);
+      page.viewer().picked.emit({ type: 'spawn', key: 'creature:1', position: { x: 0, y: 0, z: 0 } });
+      page.type('tele-search', 'a');
+      page.submit('tele-search-btn');
+      await settle(page);
+      page.click('tele-7');
+      await settle(page);
+      expect(page.viewer().spawns().length).toBe(3);
+      expect(page.viewer().selectedKey()).toBe('creature:1');
+
+      page.submit('tele-search-btn');
+      await settle(page);
+      mocks.service.loadSpawns.mockReturnValue(new Promise(() => undefined));
+      page.click('tele-8');
+      await settle(page);
+      expect(page.viewer().spawns()).toEqual([]);
+      expect(page.viewer().selectedKey()).toBeUndefined();
     });
   });
 
@@ -608,7 +693,9 @@ describe(WorldEditorComponent.name, () => {
       const { page } = await withChange();
       page.click('execute-sql');
       await settle(page);
-      expect(mocks.service.execute).toHaveBeenCalledWith(expect.stringContaining('UPDATE `gameobject`'));
+      const sql = mocks.service.execute.mock.calls[0][0] as string;
+      expect(sql.startsWith('START TRANSACTION;\nUPDATE `gameobject`')).toBe(true);
+      expect(sql.endsWith('\nCOMMIT;')).toBe(true);
       expect(mocks.toastr.success).toHaveBeenCalledWith('Query executed successfully', 'Success');
       expect(page.byId('no-changes')).toBeTruthy();
       expect(mocks.service.loadSpawns).toHaveBeenCalledTimes(2);
@@ -616,9 +703,14 @@ describe(WorldEditorComponent.name, () => {
 
     it('keeps the changes when executing fails', async () => {
       const { page } = await withChange();
-      mocks.service.execute.mockRejectedValueOnce({ message: 'Duplicate entry' }).mockRejectedValueOnce({});
+      mocks.service.execute
+        .mockRejectedValueOnce({ message: 'Duplicate entry' })
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce({})
+        .mockRejectedValueOnce(new Error('connection lost'));
       page.click('execute-sql');
       await settle(page);
+      expect(mocks.service.execute).toHaveBeenNthCalledWith(2, 'ROLLBACK;');
       page.click('execute-sql');
       await settle(page);
       expect(mocks.toastr.error).toHaveBeenNthCalledWith(1, 'Duplicate entry', 'Query error');

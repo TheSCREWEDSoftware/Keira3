@@ -20,8 +20,28 @@ describe('WorldEditorService', () => {
     queryService.query.mockImplementation((sql: string) =>
       of(
         sql.includes('FROM creature c')
-          ? [{ guid: '1', entry: 197, name: 'Marshal', map: 0, x: 1, y: 2, z: 3, o: 0.5, pathId: 10 }]
-          : [{ guid: 2, entry: 3, name: null, map: 0, x: 4, y: 5, z: 6, o: 0, pathId: 0 }],
+          ? [
+              { guid: '1', entry: 197, name: 'Marshal', map: 0, x: 1, y: 2, z: 3, o: 0.5, pathId: 10, pathFromTemplate: 0 },
+              { guid: '9', entry: 197, name: 'Marshal', map: 0, x: 1, y: 2, z: 3, o: 0.5, pathId: 70, pathFromTemplate: 1 },
+            ]
+          : [
+              {
+                guid: 2,
+                entry: 3,
+                name: null,
+                map: 0,
+                x: 4,
+                y: 5,
+                z: 6,
+                o: 0,
+                pathId: 0,
+                pathFromTemplate: 0,
+                rotation0: 0.1,
+                rotation1: 0,
+                rotation2: 0,
+                rotation3: 0.99,
+              },
+            ],
       ),
     );
 
@@ -29,11 +49,14 @@ describe('WorldEditorService', () => {
 
     expect(spawns).toEqual([
       { type: 'creature', guid: 1, entry: 197, name: 'Marshal', map: 0, x: 1, y: 2, z: 3, o: 0.5, pathId: 10 },
-      { type: 'gameobject', guid: 2, entry: 3, name: '', map: 0, x: 4, y: 5, z: 6, o: 0, pathId: 0 },
+      { type: 'creature', guid: 9, entry: 197, name: 'Marshal', map: 0, x: 1, y: 2, z: 3, o: 0.5, pathId: 70, pathFromTemplate: true },
+      { type: 'gameobject', guid: 2, entry: 3, name: '', map: 0, x: 4, y: 5, z: 6, o: 0, pathId: 0, rotation: [0.1, 0, 0, 0.99] },
     ]);
     const creatureSql = queryService.query.mock.calls[0][0] as string;
     expect(creatureSql).toContain('c.map = 0 AND c.position_x BETWEEN -9013.46 AND -8813.46 AND c.position_y BETWEEN -237 AND -37');
     expect(creatureSql).toContain('LEFT JOIN creature_addon ca ON ca.guid = c.guid');
+    expect(creatureSql).toContain('IF(ca.guid IS NOT NULL, ca.path_id, IFNULL(cta.path_id, 0)) AS pathId');
+    expect(queryService.query.mock.calls[1][0]).toContain('g.rotation0, g.rotation1, g.rotation2, g.rotation3');
     expect(creatureSql).toContain('LIMIT 3000');
   });
 
@@ -82,5 +105,23 @@ describe('WorldEditorService', () => {
     queryService.query.mockReturnValue(of([]));
     await service.execute('DELETE FROM creature WHERE guid = 1;');
     expect(queryService.query).toHaveBeenCalledWith('DELETE FROM creature WHERE guid = 1;');
+  });
+
+  it('picks guid * 10 for a new path when free, otherwise the highest path id + 1', async () => {
+    const { service, queryService } = setup();
+    queryService.query.mockReturnValueOnce(of([{ used: 0, max: 900 }]));
+    expect(await service.getFreePathId(12)).toBe(120);
+    expect(queryService.query.mock.calls[0][0]).toContain('WHERE id = 120');
+
+    queryService.query.mockReturnValueOnce(of([{ used: 3, max: 900 }]));
+    expect(await service.getFreePathId(12)).toBe(901);
+
+    queryService.query.mockReturnValueOnce(of([{ used: 0, max: 900 }]));
+    expect(await service.getFreePathId(12, [120, 950])).toBe(951);
+
+    queryService.query.mockReturnValueOnce(of(undefined));
+    expect(await service.getFreePathId(12)).toBe(120);
+    queryService.query.mockReturnValueOnce(of([]));
+    expect(await service.getFreePathId(12, [120])).toBe(121);
   });
 });
