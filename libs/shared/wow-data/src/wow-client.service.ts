@@ -1,0 +1,189 @@
+import { inject, Service } from '@angular/core';
+import { TileCoord } from './coords';
+import { DbcFile, parseMapDbc, WowMap } from './dbc';
+import { FolderArchive } from './folder-archive';
+import { decodeBlp, parseAdtChunks, parseWdtTiles, RgbaImage } from './formats';
+import { MD5_TRANSLATE_PATH, MINIMAP_ROOT, minimapKey, parseMd5Translate } from './minimap';
+import { parseConfigWtfLocale, pickLocale, sortMpqArchives } from './mpq-order';
+import { buildTerrainMesh, TerrainMeshData } from './terrain-mesh';
+import { WowDataSettingsService } from './wow-data-settings.service';
+import { StormArchive, WOW_NATIVE_API, WowNativeApi } from './wow-native-api';
+
+interface OpenClient {
+  clientPath: string;
+  mountpoint: string;
+  /** Highest priority first. */
+  archives: StormArchive[];
+  archiveNames: string[];
+}
+
+/** Reads game data straight from the user's WoW 3.3.5a client (MPQ archives) and, optionally, the server's DataDir. */
+@Service()
+export class WowClientService {
+  private readonly native = inject(WOW_NATIVE_API);
+  private readonly settings = inject(WowDataSettingsService);
+
+  private client?: Promise<OpenClient>;
+  private minimapIndex?: Promise<Map<string, string>>;
+  private maps?: Promise<WowMap[]>;
+  private mountCounter = 0;
+
+  /** False in the browser build: reading local game files needs Electron. */
+  isSupported(): boolean {
+    return this.native !== undefined;
+  }
+
+  /** Archives currently in use, lowest priority first (for diagnostics). */
+  async getArchiveNames(): Promise<string[]> {
+    return [...(await this.getClient()).archiveNames];
+  }
+
+  /** Reads a file from the highest-priority archive containing it. */
+  async readFile(path: string): Promise<Uint8Array | undefined> {
+    const { archives } = await this.getClient();
+    for (const archive of archives) {
+      if (archive.hasFile(path)) {
+        const file = archive.openFile(path);
+        try {
+          return file.read();
+        } finally {
+          file.close();
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /** Maps from the server's `dbc/Map.dbc` when configured (keeps custom maps), otherwise from the client. */
+  getMaps(): Promise<WowMap[]> {
+    this.maps ??= this.loadMaps().catch((error) => {
+      this.maps = undefined;
+      throw error;
+    });
+    return this.maps;
+  }
+
+  async getMapTiles(directory: string): Promise<TileCoord[]> {
+    const wdt = await this.readFile(`World\\Maps\\${directory}\\${directory}.wdt`);
+    return wdt ? parseWdtTiles(wdt) : [];
+  }
+
+  async getTerrain(directory: string, tile: TileCoord): Promise<TerrainMeshData | undefined> {
+    const adt = await this.readFile(`World\\Maps\\${directory}\\${directory}_${tile.tx}_${tile.ty}.adt`);
+    return adt ? buildTerrainMesh(tile, parseAdtChunks(adt)) : undefined;
+  }
+
+  async getMinimap(directory: string, tile: TileCoord): Promise<RgbaImage | undefined> {
+    const hashed = (await this.getMinimapIndex()).get(minimapKey(directory, tile));
+    const blp = hashed ? await this.readFile(`${MINIMAP_ROOT}${hashed}`) : undefined;
+    return blp ? decodeBlp(blp) : undefined;
+  }
+
+  /** Closes the archives; the next read reopens them (e.g. after the client path changed). */
+  async close(): Promise<void> {
+    const client = this.client;
+    this.client = undefined;
+    this.minimapIndex = undefined;
+    this.maps = undefined;
+    if (!client) {
+      return;
+    }
+    try {
+      const { archives, mountpoint } = await client;
+      archives.forEach((archive) => archive.close());
+      this.requireNative().loadStorm().FS.unmount(mountpoint);
+    } catch {
+      // Opening failed: nothing to release.
+    }
+  }
+
+  private requireNative(): WowNativeApi {
+    if (!this.native) {
+      throw new Error('Reading WoW game files is only available in the Keira3 desktop app.');
+    }
+    return this.native;
+  }
+
+  private getClient(): Promise<OpenClient> {
+    const clientPath = this.settings.paths().clientPath;
+    if (this.client) {
+      return this.client.then((client) => (client.clientPath === clientPath ? client : this.close().then(() => this.getClient())));
+    }
+    this.client = this.openClient(clientPath).catch((error) => {
+      this.client = undefined;
+      throw error;
+    });
+    return this.client;
+  }
+
+  private async openClient(clientPath: string): Promise<OpenClient> {
+    const native = this.requireNative();
+    if (!clientPath) {
+      throw new Error('Set the WoW client folder in the World Editor settings first.');
+    }
+    const dataPath = `${clientPath}/Data`;
+    if (!native.isDirectory(dataPath)) {
+      throw new Error(`No "Data" folder found in ${clientPath}. Pick the folder that contains Wow.exe.`);
+    }
+
+    const entries = native.readdir(dataPath);
+    const configWtf = `${clientPath}/WTF/Config.wtf`;
+    const preferredLocale = native.exists(configWtf)
+      ? parseConfigWtfLocale(new TextDecoder().decode(native.readFile(configWtf)))
+      : undefined;
+    const locale = pickLocale(
+      entries.filter((entry) => native.isDirectory(`${dataPath}/${entry}`)),
+      preferredLocale,
+    );
+    const candidates = [...entries, ...(locale ? native.readdir(`${dataPath}/${locale}`).map((name) => `${locale}/${name}`) : [])];
+    const archiveNames = sortMpqArchives(candidates, locale ?? '');
+    if (archiveNames.length === 0) {
+      throw new Error(`No WoW 3.3.5a MPQ archives found in ${dataPath}.`);
+    }
+
+    const storm = native.loadStorm();
+    const mountpoint = `/keira-wow-${++this.mountCounter}`;
+    storm.FS.mkdir(mountpoint);
+    storm.FS.mount(storm.FS.filesystems.NODEFS, { root: dataPath }, mountpoint);
+
+    const archives: StormArchive[] = [];
+    const opened: string[] = [];
+    for (const name of archiveNames) {
+      try {
+        const folder = `${dataPath}/${name}`;
+        archives.unshift(
+          native.isDirectory(folder) ? new FolderArchive(native, folder) : await storm.MPQ.open(`${mountpoint}/${name}`, 'r'),
+        );
+        opened.push(name);
+      } catch (error) {
+        // The game skips archives it can't read too; one bad patch shouldn't hide the rest of the world.
+        console.warn(`[World Editor] Skipping ${name}: ${(error as Error).message}`);
+      }
+    }
+    if (archives.length === 0) {
+      storm.FS.unmount(mountpoint);
+      throw new Error(`None of the MPQ archives in ${dataPath} could be opened.`);
+    }
+    return { clientPath, mountpoint, archives, archiveNames: opened };
+  }
+
+  private getMinimapIndex(): Promise<Map<string, string>> {
+    this.minimapIndex ??= this.readFile(MD5_TRANSLATE_PATH).then((trs) =>
+      trs ? parseMd5Translate(new TextDecoder().decode(trs)) : new Map<string, string>(),
+    );
+    return this.minimapIndex;
+  }
+
+  private async loadMaps(): Promise<WowMap[]> {
+    const native = this.requireNative();
+    const serverMapDbc = `${this.settings.paths().serverDataPath}/dbc/Map.dbc`;
+    const bytes =
+      this.settings.paths().serverDataPath && native.exists(serverMapDbc)
+        ? native.readFile(serverMapDbc)
+        : await this.readFile('DBFilesClient\\Map.dbc');
+    if (!bytes) {
+      throw new Error('Map.dbc not found in the client or server data.');
+    }
+    return parseMapDbc(new DbcFile(bytes));
+  }
+}

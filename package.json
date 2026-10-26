@@ -45,6 +45,8 @@
     "@ngx-translate/core": "18.0.0",
     "@ngx-translate/http-loader": "18.0.0",
     "@uiw/codemirror-theme-github": "4.25.12",
+    "@wowserhq/format": "0.28.0",
+    "@wowserhq/stormjs": "0.4.1",
     "acorn": "8.19.0",
     "electron-settings": "4.0.4",
     "jquery": "3.7.1",
@@ -55,6 +57,7 @@
     "serialize-javascript": "7.1.4",
     "sqlite3": "5.1.7",
     "ssh2": "1.17.0",
+    "three": "0.186.1",
     "tslib": "2.8.1"
   },
   "devDependencies": {
@@ -98,6 +101,7 @@
     "@types/sqlite3": "5.1.0",
     "@types/sqlstring": "2.3.2",
     "@types/ssh2": "1.15.6",
+    "@types/three": "0.186.0",
     "@typescript-eslint/eslint-plugin": "8.72.0",
     "@typescript-eslint/parser": "8.72.0",
     "@vitest/coverage-v8": "4.1.12",
