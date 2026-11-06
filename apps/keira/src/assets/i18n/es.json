@@ -167,6 +167,9 @@
       "PAGE_TEXT": "Texto de Página",
       "ACORE_STRING_TEXT": "Cadenas de Acore",
       "SELECT_ACORE_STRING_TEXT": "Seleccionar Cadenas de Acore",
+      "PAGE_TEXT_LOCALE": "Locale de Page Text",
+      "NPC_TEXT_LOCALE": "Locale de Npc Text",
+      "BROADCAST_TEXT_LOCALE": "Locale de Broadcast Text",
       "ACORE_STRING_LOCALE": "Traducción de Cadenas de Acore"
     },
     "GOSSIP": {

@@ -167,6 +167,9 @@
       "PAGE_TEXT": "Page Text",
       "ACORE_STRING_TEXT": "Acore Strings",
       "SELECT_ACORE_STRING_TEXT": "Select Acore Strings",
+      "PAGE_TEXT_LOCALE": "Page Text Locale",
+      "NPC_TEXT_LOCALE": "Npc Text Locale",
+      "BROADCAST_TEXT_LOCALE": "Broadcast Text Locale",
       "ACORE_STRING_LOCALE": "Acore String Locale"
     },
     "GOSSIP": {

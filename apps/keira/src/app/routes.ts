@@ -88,13 +88,19 @@ import {
   NpcTextHandlerService,
   PageTextComponent,
   PageTextHandlerService,
+  PageTextCopyComponent,
+  NpcTextCopyComponent,
   SelectBroadcastTextComponent,
   SelectNpcTextComponent,
   SelectPageTextComponent,
   AcoreStringComponent,
   AcoreStringHandlerService,
+  AcoreStringCopyComponent,
   AcoreStringLocaleComponent,
   SelectAcoreStringComponent,
+  PageTextLocaleComponent,
+  NpcTextLocaleComponent,
+  BroadcastTextLocaleComponent,
 } from '@keira/features/texts';
 import { GameTeleComponent, GameTeleHandlerService, SelectGameTeleComponent } from '@keira/features/game-tele';
 import {
@@ -406,8 +412,28 @@ export const KEIRA_ROUTES: Routes = [
     path: 'texts',
     children: [
       {
+        path: 'broadcast-text-locale',
+        component: BroadcastTextLocaleComponent,
+        canActivate: [BroadcastTextHandlerService],
+      },
+      {
+        path: 'npc-text-locale',
+        component: NpcTextLocaleComponent,
+        canActivate: [NpcTextHandlerService],
+      },
+      {
+        path: 'page-text-locale',
+        component: PageTextLocaleComponent,
+        canActivate: [PageTextHandlerService],
+      },
+      {
         path: 'select-page-text',
         component: SelectPageTextComponent,
+      },
+      {
+        path: 'page-text-copy',
+        component: PageTextCopyComponent,
+        canActivate: [PageTextHandlerService],
       },
       {
         path: 'page-text',
@@ -428,6 +454,11 @@ export const KEIRA_ROUTES: Routes = [
         component: SelectNpcTextComponent,
       },
       {
+        path: 'npc-text-copy',
+        component: NpcTextCopyComponent,
+        canActivate: [NpcTextHandlerService],
+      },
+      {
         path: 'npc-text',
         component: NpcTextComponent,
         canActivate: [NpcTextHandlerService],
@@ -435,6 +466,11 @@ export const KEIRA_ROUTES: Routes = [
       {
         path: 'acore-string',
         component: AcoreStringComponent,
+        canActivate: [AcoreStringHandlerService],
+      },
+      {
+        path: 'acore-string-copy',
+        component: AcoreStringCopyComponent,
         canActivate: [AcoreStringHandlerService],
       },
       {
