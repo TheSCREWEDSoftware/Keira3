@@ -121,7 +121,9 @@
       "CREATURE_QUESTENDER": "Существо-завершатель задания",
       "GAMEOBJECT_QUESTSTARTER": "Объект-начинатель задания",
       "GAMEOBJECT_QUESTENDER": "Объект-завершатель задания",
-      "QUEST_CHAIN": "Цепочка заданий"
+      "QUEST_CHAIN": "Цепочка заданий",
+      "QUEST_OFFER_REWARD_LOCALE": "Quest Offer Reward (локализация)",
+      "QUEST_REQUEST_ITEMS_LOCALE": "Quest Request Items (локализация)"
     },
     "GAME_OBJECT": {
       "TITLE": "Игровые Объекты",
@@ -482,7 +484,30 @@
       "LEGEND_CONDITIONS": "Есть условия доступности (нажмите, чтобы открыть)",
       "BAND_ANY": "Одно из этих ({{group}})",
       "BAND_ALL": "Все эти ({{group}})",
-      "CONDITIONS_TOOLTIP": "Условий доступности: {{count}} — нажмите, чтобы открыть их в редакторе условий"
+      "CONDITIONS_TOOLTIP": "Условий доступности: {{count}} — нажмите, чтобы открыть их в редакторе условий",
+      "LINKS_TITLE": "Связи цепочки задания {{id}} {{title}}",
+      "LINKS_HELP": "PrevQuestID (> 0 — выполнено раньше, < 0 — взято), NextQuestID, ExclusiveGroup (> 0 — одно из группы, < 0 — все) и BreadcrumbForQuestId в quest_template_addon. Нажмите ✎ на задании цепочки, чтобы изменить его связи.",
+      "LINKS_EDIT": "Изменить связи цепочки этого задания",
+      "LINKS_RESET": "Отменить изменения"
+    },
+    "CHECK": {
+      "REQUIRED_ITEM_NO_COUNT": "У требуемого предмета нет количества: задание невыполнимо.",
+      "REQUIRED_COUNT_NO_ITEM": "У требуемого количества нет предмета.",
+      "DROP_QUANTITY_NO_ITEM": "У количества добычи предмета нет предмета.",
+      "NPC_OR_GO_NO_COUNT": "У требуемого существа или объекта нет количества: задание невыполнимо.",
+      "COUNT_NO_NPC_OR_GO": "У требуемого количества нет существа или объекта.",
+      "CHOICE_QUANTITY_NO_ITEM": "У количества награды на выбор нет предмета.",
+      "REWARD_ITEM_NO_AMOUNT": "У предмета награды нет количества: он не будет выдан.",
+      "REWARD_AMOUNT_NO_ITEM": "У количества награды нет предмета.",
+      "REWARD_ITEM_GAP": "Предмет награды идёт после пустого: он не загрузится.",
+      "TRACKING_CHOICE": "Задание-отслеживание (флаг TRACKING) не может давать награды на выбор.",
+      "REWARD_FACTION_VALUE_RANGE": "Значение награды репутацией вне диапазона -9…9.",
+      "REWARD_OVERRIDE_NO_FACTION": "У переопределения репутации нет фракции.",
+      "FACTION_VALUE_NO_FACTION": "У требуемого значения фракции нет фракции: оно ни на что не влияет.",
+      "MISSING_ITEM": "Этих предметов не существует.",
+      "MISSING_CREATURE": "Этих существ не существует: задание невыполнимо.",
+      "MISSING_GAMEOBJECT": "Этих объектов не существует: задание невыполнимо.",
+      "MISSING_QUEST": "Следующего задания не существует: цепочка не сработает."
     }
   },
   "GAMEOBJECT": {

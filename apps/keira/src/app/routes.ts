@@ -74,8 +74,11 @@ import {
   QuestRequestItemsComponent,
   QuestTemplateAddonComponent,
   QuestTemplateLocaleComponent,
+  QuestRequestItemsLocaleComponent,
+  QuestOfferRewardLocaleComponent,
   QuestTemplateComponent,
   SelectQuestComponent,
+  QuestCopyComponent,
 } from '@keira/features/quest';
 import { SaiFullEditorComponent, SaiSearchEntityComponent, SaiSearchExistingComponent } from '@keira/features/smart-scripts';
 import { SelectSpellComponent, SpellDbcComponent } from '@keira/features/spell';
@@ -232,6 +235,11 @@ export const KEIRA_ROUTES: Routes = [
         canActivate: [QuestHandlerService],
       },
       {
+        path: 'copy',
+        component: QuestCopyComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
         path: 'quest-template-addon',
         component: QuestTemplateAddonComponent,
         canActivate: [QuestHandlerService],
@@ -239,6 +247,16 @@ export const KEIRA_ROUTES: Routes = [
       {
         path: 'quest-template-locale',
         component: QuestTemplateLocaleComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'quest-offer-reward-locale',
+        component: QuestOfferRewardLocaleComponent,
+        canActivate: [QuestHandlerService],
+      },
+      {
+        path: 'quest-request-items-locale',
+        component: QuestRequestItemsLocaleComponent,
         canActivate: [QuestHandlerService],
       },
       {

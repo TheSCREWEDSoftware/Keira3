@@ -286,6 +286,22 @@
                       </a>
                     </li>
                     <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-offer-reward-locale'">
+                        {{ 'SIDEBAR.QUEST.QUEST_OFFER_REWARD_LOCALE' | translate }}
+                        @if (questHandlerService.isQuestOfferRewardLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-request-items-locale'">
+                        {{ 'SIDEBAR.QUEST.QUEST_REQUEST_ITEMS_LOCALE' | translate }}
+                        @if (questHandlerService.isQuestRequestItemsLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
                       <a href="#" routerLinkActive="active" [routerLink]="'quest/quest-offer-reward'">
                         {{ 'SIDEBAR.QUEST.QUEST_OFFER_REWARD' | translate }}
                         @if (questHandlerService.isQuestOfferRewardUnsaved()) {
