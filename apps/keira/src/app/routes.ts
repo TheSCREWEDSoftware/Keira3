@@ -2,6 +2,18 @@ import { Routes } from '@angular/router';
 
 import { DashboardComponent } from '@keira/features/dashboard';
 import { SettingsComponent } from '@keira/features/settings';
+import {
+  SaiWaypointsComponent,
+  SaiWaypointsHandlerService,
+  SelectSaiWaypointsComponent,
+  SelectWaypointComponent,
+  SelectWaypointScriptsComponent,
+  WaypointDataAddonComponent,
+  WaypointDataComponent,
+  WaypointHandlerService,
+  WaypointScriptsComponent,
+  WaypointScriptsHandlerService,
+} from '@keira/features/waypoints';
 
 import { ConditionsComponent, ConditionsHandlerService, SelectConditionsComponent } from '@keira/features/conditions';
 import {
@@ -465,6 +477,32 @@ export const KEIRA_ROUTES: Routes = [
         component: GossipMenuOptionComponent,
         canActivate: [GossipHandlerService],
       },
+    ],
+  },
+  {
+    path: 'waypoints',
+    children: [
+      {
+        path: 'select',
+        component: SelectWaypointComponent,
+      },
+      {
+        path: 'waypoint-data',
+        component: WaypointDataComponent,
+        canActivate: [WaypointHandlerService],
+      },
+      {
+        path: 'select-scripts',
+        component: SelectWaypointScriptsComponent,
+      },
+      {
+        path: 'waypoint-scripts',
+        component: WaypointScriptsComponent,
+        canActivate: [WaypointScriptsHandlerService],
+      },
+      { path: 'waypoint-data-addon', component: WaypointDataAddonComponent, canActivate: [WaypointHandlerService] },
+      { path: 'select-sai', component: SelectSaiWaypointsComponent },
+      { path: 'sai-waypoints', component: SaiWaypointsComponent, canActivate: [SaiWaypointsHandlerService] },
     ],
   },
 

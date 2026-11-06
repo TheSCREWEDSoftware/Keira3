@@ -211,7 +211,14 @@
     "WORLD_EDITOR": "3D World Editor",
     "SETTINGS": "Settings",
     "WAYPOINTS": {
-      "TITLE": "Waypoints"
+      "TITLE": "Waypoints",
+      "SELECT_PATH": "Search path",
+      "WAYPOINT_DATA": "Path points",
+      "SELECT_SCRIPT": "Search waypoint script",
+      "WAYPOINT_SCRIPTS": "Waypoint script",
+      "WAYPOINT_DATA_ADDON": "Spline points",
+      "SELECT_SAI_PATH": "Search SmartAI path",
+      "SAI_WAYPOINTS": "SmartAI path points"
     },
     "POOLS": {
       "TITLE": "Pools"
@@ -1393,6 +1400,38 @@
     "SOAP_ACCOUNT_COPY": "Copy as SQL",
     "SOAP_ACCOUNT_CREATED": "Account created: it is now the SOAP login (tested above).",
     "SOAP_ACCOUNT_COPIED": "The SQL is copied: run it on the auth database, then enter this name and password above."
+  },
+  "WAYPOINTS": {
+    "SELECT_PATH": "Select an existing path",
+    "SELECT_SCRIPT": "Select an existing waypoint script",
+    "DELAY_TOOLTIP": "How long the creature waits at the point (milliseconds)",
+    "ACTION_TOOLTIP": "The waypoint script run at the point (waypoint_scripts.id; 0: none)",
+    "EDIT_ACTION": "Edit",
+    "SHOW_IN_3D": "Show in the World Editor",
+    "WALKERS": "Creatures walking this path",
+    "NO_WALKERS": "No creature uses this path (creature_addon / creature_template_addon path_id).",
+    "SCRIPT_DELAY_TOOLTIP": "When the step runs after the creature reaches the point (seconds)",
+    "USED_AT": "Points running this script",
+    "NOT_USED": "No waypoint runs this script (waypoint_data.action).",
+    "PATH_POINT": "Path {{id}}, point {{point}}",
+    "ORIENTATION_TOOLTIP": "Where the creature faces on arriving, in radians (north 0, south 3.14). Leave it empty (NULL) to keep the way it walked in.",
+    "ORIENTATION_NULL": "NULL (keeps its way)",
+    "VELOCITY_TOOLTIP": "Its speed to the point (0: its usual walk or run speed).",
+    "SMOOTH_TOOLTIP": "1: goes on to the next point without stopping (a smooth curve through the points).",
+    "SELECT_SAI_PATH": "Select an existing SmartAI path (waypoints)",
+    "SAI_USERS": "SmartAI scripts starting this path (WP_START)",
+    "NO_SAI_USERS": "No SmartAI script starts this path (smart_scripts action 53 with it as param2).",
+    "OPEN_SAI": "Open SmartAI",
+    "SPLINE_HELP": "The points of the curve the creature follows to reach each point of the path (in order of SplinePointIndex).",
+    "COL_NAME": "Creature",
+    "COL_POINTS": "Points",
+    "COL_MAP": "Map",
+    "COL_GUID": "Spawn (guid)",
+    "COL_ENTRY": "Template (entry)",
+    "COL_SAI_USERS": "SmartAI scripts",
+    "COL_ACTIONS": "Actions",
+    "COL_COMMANDS": "Commands",
+    "COL_USED": "Used by waypoints"
   },
   "POOLS": {
     "PROBLEM_EMPTY": "The pool holds nothing: the world server won't spawn it.",

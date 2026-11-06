@@ -211,7 +211,14 @@
     "WORLD_EDITOR": "3D世界编辑器",
     "SETTINGS": "设置",
     "WAYPOINTS": {
-      "TITLE": "路径点"
+      "TITLE": "路径点",
+      "SELECT_PATH": "搜索路径",
+      "WAYPOINT_DATA": "路径点",
+      "SELECT_SCRIPT": "搜索路径点脚本",
+      "WAYPOINT_SCRIPTS": "路径点脚本",
+      "WAYPOINT_DATA_ADDON": "样条点",
+      "SELECT_SAI_PATH": "搜索 SmartAI 路径",
+      "SAI_WAYPOINTS": "SmartAI 路径点"
     },
     "POOLS": {
       "TITLE": "刷新池"
@@ -1393,6 +1400,38 @@
     "SOAP_ACCOUNT_COPY": "复制为 SQL",
     "SOAP_ACCOUNT_CREATED": "账号已创建：现在它是 SOAP 登录（已在上方测试）。",
     "SOAP_ACCOUNT_COPIED": "SQL 已复制：在 auth 数据库中执行，然后在上方填写此名称和密码。"
+  },
+  "WAYPOINTS": {
+    "SELECT_PATH": "选择现有路径",
+    "SELECT_SCRIPT": "选择现有路径点脚本",
+    "DELAY_TOOLTIP": "生物在该点等待的时间（毫秒）",
+    "ACTION_TOOLTIP": "在该点运行的路径点脚本（waypoint_scripts.id；0：无）",
+    "EDIT_ACTION": "编辑",
+    "SHOW_IN_3D": "在世界编辑器中显示",
+    "WALKERS": "沿此路径行走的生物",
+    "NO_WALKERS": "没有生物使用此路径（creature_addon / creature_template_addon 的 path_id）。",
+    "SCRIPT_DELAY_TOOLTIP": "到达该点后该步骤何时运行（秒）",
+    "USED_AT": "运行此脚本的路径点",
+    "NOT_USED": "没有路径点运行此脚本（waypoint_data.action）。",
+    "PATH_POINT": "路径 {{id}}，第 {{point}} 点",
+    "ORIENTATION_TOOLTIP": "生物到达时的朝向（弧度，北 0，南 3.14）。留空（NULL）则保持行进方向。",
+    "ORIENTATION_NULL": "NULL（保持方向）",
+    "VELOCITY_TOOLTIP": "到该点的速度（0：通常的行走或奔跑速度）。",
+    "SMOOTH_TOOLTIP": "1：不停顿地前往下一个点（穿过各点的平滑曲线）。",
+    "SELECT_SAI_PATH": "选择已有的 SmartAI 路径（waypoints）",
+    "SAI_USERS": "启动此路径的 SmartAI 脚本（WP_START）",
+    "NO_SAI_USERS": "没有 SmartAI 脚本启动此路径（smart_scripts 动作 53，param2 为该路径）。",
+    "OPEN_SAI": "打开 SmartAI",
+    "SPLINE_HELP": "生物到达路径每个点时所沿曲线上的点（按 SplinePointIndex 排序）。",
+    "COL_NAME": "生物",
+    "COL_POINTS": "路点数",
+    "COL_MAP": "地图",
+    "COL_GUID": "刷新点 (guid)",
+    "COL_ENTRY": "模板 (entry)",
+    "COL_SAI_USERS": "SmartAI 脚本",
+    "COL_ACTIONS": "动作数",
+    "COL_COMMANDS": "命令",
+    "COL_USED": "被路点使用"
   },
   "POOLS": {
     "PROBLEM_EMPTY": "刷新池为空：服务器不会刷出它。",

@@ -211,7 +211,14 @@
     "WORLD_EDITOR": "3D-редактор мира",
     "SETTINGS": "Настройки",
     "WAYPOINTS": {
-      "TITLE": "Маршруты"
+      "TITLE": "Маршруты",
+      "SELECT_PATH": "Найти маршрут",
+      "WAYPOINT_DATA": "Точки маршрута",
+      "SELECT_SCRIPT": "Найти скрипт точки",
+      "WAYPOINT_SCRIPTS": "Скрипт точки",
+      "WAYPOINT_DATA_ADDON": "Точки сплайна",
+      "SELECT_SAI_PATH": "Поиск пути SmartAI",
+      "SAI_WAYPOINTS": "Точки пути SmartAI"
     },
     "POOLS": {
       "TITLE": "Пулы"
@@ -1393,6 +1400,38 @@
     "SOAP_ACCOUNT_COPY": "Копировать как SQL",
     "SOAP_ACCOUNT_CREATED": "Учётная запись создана: теперь это логин SOAP (проверка выше).",
     "SOAP_ACCOUNT_COPIED": "SQL скопирован: выполните его в базе auth, затем введите эти имя и пароль выше."
+  },
+  "WAYPOINTS": {
+    "SELECT_PATH": "Выберите существующий маршрут",
+    "SELECT_SCRIPT": "Выберите существующий скрипт точки",
+    "DELAY_TOOLTIP": "Сколько существо ждёт в точке (миллисекунды)",
+    "ACTION_TOOLTIP": "Скрипт, выполняемый в точке (waypoint_scripts.id; 0: нет)",
+    "EDIT_ACTION": "Изменить",
+    "SHOW_IN_3D": "Показать в Редакторе мира",
+    "WALKERS": "Существа на этом маршруте",
+    "NO_WALKERS": "Ни одно существо не использует этот маршрут (path_id в creature_addon / creature_template_addon).",
+    "SCRIPT_DELAY_TOOLTIP": "Когда шаг выполняется после прибытия в точку (секунды)",
+    "USED_AT": "Точки, выполняющие этот скрипт",
+    "NOT_USED": "Ни одна точка не выполняет этот скрипт (waypoint_data.action).",
+    "PATH_POINT": "Маршрут {{id}}, точка {{point}}",
+    "ORIENTATION_TOOLTIP": "Куда смотрит существо по прибытии, в радианах (север 0, юг 3,14). Оставьте пустым (NULL), чтобы оно сохранило направление движения.",
+    "ORIENTATION_NULL": "NULL (сохраняет направление)",
+    "VELOCITY_TOOLTIP": "Скорость до точки (0: обычная скорость шага или бега).",
+    "SMOOTH_TOOLTIP": "1: идёт к следующей точке без остановки (плавная кривая через точки).",
+    "SELECT_SAI_PATH": "Выберите существующий путь SmartAI (waypoints)",
+    "SAI_USERS": "Скрипты SmartAI, запускающие этот путь (WP_START)",
+    "NO_SAI_USERS": "Ни один скрипт SmartAI не запускает этот путь (действие 53 в smart_scripts с ним в param2).",
+    "OPEN_SAI": "Открыть SmartAI",
+    "SPLINE_HELP": "Точки кривой, по которой существо идёт к каждой точке пути (по порядку SplinePointIndex).",
+    "COL_NAME": "Существо",
+    "COL_POINTS": "Точки",
+    "COL_MAP": "Карта",
+    "COL_GUID": "Спавн (guid)",
+    "COL_ENTRY": "Шаблон (entry)",
+    "COL_SAI_USERS": "Скрипты SmartAI",
+    "COL_ACTIONS": "Действия",
+    "COL_COMMANDS": "Команды",
+    "COL_USED": "Используется точками"
   },
   "POOLS": {
     "PROBLEM_EMPTY": "Пул пуст: сервер не будет его создавать.",

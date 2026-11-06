@@ -10,6 +10,7 @@ import { CreatureHandlerService } from '@keira/features/creature';
 import { GameobjectHandlerService } from '@keira/features/gameobject';
 import { GossipHandlerService } from '@keira/features/gossip';
 import { WowDataSettingsService } from '@keira/shared/wow-data';
+import { SaiWaypointsHandlerService, WaypointHandlerService, WaypointScriptsHandlerService } from '@keira/features/waypoints';
 import { ItemHandlerService } from '@keira/features/item';
 import {
   FishingLootHandlerService,
@@ -97,6 +98,9 @@ export class SidebarComponent {
   protected readonly gameobjectHandlerService = inject(GameobjectHandlerService);
   protected readonly itemHandlerService = inject(ItemHandlerService);
   protected readonly gossipHandlerService = inject(GossipHandlerService);
+  protected readonly waypointHandlerService = inject(WaypointHandlerService);
+  protected readonly waypointScriptsHandlerService = inject(WaypointScriptsHandlerService);
+  protected readonly saiWaypointsHandlerService = inject(SaiWaypointsHandlerService);
   private readonly wowDataSettings = inject(WowDataSettingsService);
   /** Whether the AzerothCore source folder is set: the script pages reading it are greyed out without it. */
   protected readonly sourceFolderSet = computed(() => !!this.wowDataSettings.paths().sourcePath);

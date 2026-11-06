@@ -211,7 +211,14 @@
     "WORLD_EDITOR": "Editor de Mundo 3D",
     "SETTINGS": "Ajustes",
     "WAYPOINTS": {
-      "TITLE": "Puntos de ruta"
+      "TITLE": "Puntos de ruta",
+      "SELECT_PATH": "Buscar ruta",
+      "WAYPOINT_DATA": "Puntos de la ruta",
+      "SELECT_SCRIPT": "Buscar script de punto",
+      "WAYPOINT_SCRIPTS": "Script de punto",
+      "WAYPOINT_DATA_ADDON": "Puntos de spline",
+      "SELECT_SAI_PATH": "Buscar ruta SmartAI",
+      "SAI_WAYPOINTS": "Puntos de ruta SmartAI"
     },
     "POOLS": {
       "TITLE": "Pools"
@@ -1393,6 +1400,38 @@
     "SOAP_ACCOUNT_COPY": "Copiar como SQL",
     "SOAP_ACCOUNT_CREATED": "Cuenta creada: ahora es el login SOAP (probado arriba).",
     "SOAP_ACCOUNT_COPIED": "SQL copiado: ejecútalo en la base auth y luego escribe este nombre y contraseña arriba."
+  },
+  "WAYPOINTS": {
+    "SELECT_PATH": "Selecciona una ruta existente",
+    "SELECT_SCRIPT": "Selecciona un script de punto existente",
+    "DELAY_TOOLTIP": "Cuánto espera la criatura en el punto (milisegundos)",
+    "ACTION_TOOLTIP": "El script que se ejecuta en el punto (waypoint_scripts.id; 0: ninguno)",
+    "EDIT_ACTION": "Editar",
+    "SHOW_IN_3D": "Ver en el Editor del Mundo",
+    "WALKERS": "Criaturas que recorren esta ruta",
+    "NO_WALKERS": "Ninguna criatura usa esta ruta (path_id de creature_addon / creature_template_addon).",
+    "SCRIPT_DELAY_TOOLTIP": "Cuándo se ejecuta el paso tras llegar al punto (segundos)",
+    "USED_AT": "Puntos que ejecutan este script",
+    "NOT_USED": "Ningún punto ejecuta este script (waypoint_data.action).",
+    "PATH_POINT": "Ruta {{id}}, punto {{point}}",
+    "ORIENTATION_TOOLTIP": "Hacia dónde mira la criatura al llegar, en radianes (norte 0, sur 3,14). Déjalo vacío (NULL) para que mantenga la dirección con la que llegó.",
+    "ORIENTATION_NULL": "NULL (mantiene su dirección)",
+    "VELOCITY_TOOLTIP": "Su velocidad hasta el punto (0: su velocidad habitual al andar o correr).",
+    "SMOOTH_TOOLTIP": "1: sigue al siguiente punto sin detenerse (una curva suave entre los puntos).",
+    "SELECT_SAI_PATH": "Selecciona una ruta SmartAI existente (waypoints)",
+    "SAI_USERS": "Scripts SmartAI que inician esta ruta (WP_START)",
+    "NO_SAI_USERS": "Ningún script SmartAI inicia esta ruta (acción 53 de smart_scripts con ella como param2).",
+    "OPEN_SAI": "Abrir SmartAI",
+    "SPLINE_HELP": "Los puntos de la curva que sigue la criatura hasta cada punto de la ruta (en orden de SplinePointIndex).",
+    "COL_NAME": "Criatura",
+    "COL_POINTS": "Puntos",
+    "COL_MAP": "Mapa",
+    "COL_GUID": "Spawn (guid)",
+    "COL_ENTRY": "Plantilla (entry)",
+    "COL_SAI_USERS": "Scripts SmartAI",
+    "COL_ACTIONS": "Acciones",
+    "COL_COMMANDS": "Comandos",
+    "COL_USED": "Usado por waypoints"
   },
   "POOLS": {
     "PROBLEM_EMPTY": "El pool está vacío: el servidor no lo generará.",
