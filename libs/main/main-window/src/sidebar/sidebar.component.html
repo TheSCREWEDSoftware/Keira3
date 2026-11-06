@@ -69,6 +69,12 @@
           </li>
 
           <li>
+            <a id="sniffs-toggle" href="#" [routerLink]="'sniffs'">
+              <i class="fa fa-satellite-dish"></i> {{ 'SIDEBAR.SNIFFS' | translate }}
+            </a>
+          </li>
+
+          <li>
             <a id="collapse-all" (click)="collapseAll()">
               <i class="fas fa-angle-double-up"></i> {{ 'SIDEBAR.COLLAPSE_ALL' | translate }}
             </a>
