@@ -89,6 +89,9 @@
       "@keira/features/pools": [
         "libs/features/pools/src/index.ts"
       ],
+      "@keira/features/world-editor": [
+        "libs/features/world-editor/src/index.ts"
+      ],
       "@keira/main/connection-window": [
         "libs/main/connection-window/src/index.ts"
       ],
