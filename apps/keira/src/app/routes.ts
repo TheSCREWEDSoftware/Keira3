@@ -79,7 +79,13 @@ import {
 } from '@keira/features/quest';
 import { SaiFullEditorComponent, SaiSearchEntityComponent, SaiSearchExistingComponent } from '@keira/features/smart-scripts';
 import { SelectSpellComponent, SpellDbcComponent } from '@keira/features/spell';
-import { SqlEditorComponent } from '@keira/features/sql-editor';
+import {
+  FindAnywhereComponent,
+  SessionSqlComponent,
+  SniffToSqlComponent,
+  SqlEditorComponent,
+  TableBrowserComponent,
+} from '@keira/features/sql-editor';
 import { SaiHandlerService } from '@keira/shared/sai-editor';
 import {
   BroadcastTextComponent,
@@ -113,6 +119,22 @@ export const KEIRA_ROUTES: Routes = [
   {
     path: 'sql-editor',
     component: SqlEditorComponent,
+  },
+  {
+    path: 'session-sql',
+    component: SessionSqlComponent,
+  },
+  {
+    path: 'table-browser',
+    component: TableBrowserComponent,
+  },
+  {
+    path: 'find-anywhere',
+    component: FindAnywhereComponent,
+  },
+  {
+    path: 'sniff-to-sql',
+    component: SniffToSqlComponent,
   },
   {
     path: 'creature',

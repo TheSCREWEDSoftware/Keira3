@@ -1449,9 +1449,39 @@
     "NOT_COPIED": "It failed: not copied (your changes are kept)."
   },
   "SESSION_SQL": {
+    "TITLE": "Session SQL",
+    "HELP": "The queries put aside from the editors (\"To the session\"), in order: review them, copy them, save them as one .sql file or execute them all. Kept on this computer until cleared.",
     "ADD": "To the session",
     "ADDED": "In the session",
-    "ADD_TIP": "Put this query aside with the others of the session (Session SQL), to save or execute them together"
+    "ADD_TIP": "Put this query aside with the others of the session (Session SQL), to save or execute them together",
+    "COPY": "Copy all",
+    "SAVE": "Save as .sql",
+    "EXECUTE": "Execute all",
+    "CLEAR": "Clear",
+    "EXECUTED": "Executed.",
+    "EMPTY": "Nothing yet: use \"To the session\" next to an editor's query."
+  },
+  "TABLE_BROWSER": {
+    "TITLE": "Table browser",
+    "HELP": "Any table of the world database, searched by conditions on its columns (for the tables Keira has no editor for). Read only.",
+    "TABLE": "Table",
+    "LIMIT": "Rows",
+    "ADD_CONDITION": "Condition",
+    "ROWS": "{{ count }} rows"
+  },
+  "FIND_ANYWHERE": {
+    "TITLE": "Find anywhere",
+    "HELP": "Every table using an id: spawns, quest relations, loot, vendors, SmartAI, conditions, the DB scripts and more. At most 50 rows per table.",
+    "ID": "Id",
+    "NONE": "Nothing uses this id.",
+    "KIND": {
+      "creature": "Creature",
+      "gameobject": "Gameobject",
+      "item": "Item",
+      "quest": "Quest",
+      "spell": "Spell",
+      "broadcastText": "Broadcast text"
+    }
   },
   "EXPORT_ENTITY": "Export this entity as SQL, every table of it",
   "SPELL_INFO": {
@@ -1476,5 +1506,14 @@
     "TRIGGERS": "triggers",
     "CHAIN": "chain targets",
     "NONE": "The game client has no such spell."
+  },
+  "SNIFF_TO_SQL": {
+    "TITLE": "Sniff to SQL",
+    "HELP": "Paste a parsed sniff (WowPacketParser's text output): the paths creatures walked (SMSG_ON_MONSTER_MOVE end points) become waypoint_data or waypoints, what they said (SMSG_MESSAGECHAT) creature_text, matched to broadcast_text by its text. Check the SQL before using it: the sniff's guids are not the database's.",
+    "PLACEHOLDER": "ServerToClient: SMSG_ON_MONSTER_MOVE …",
+    "PARSE": "Read",
+    "SUMMARY": "{{ paths }} paths, {{ texts }} texts ({{ matched }} found in broadcast_text).",
+    "FIRST_PATH": "First path id",
+    "NOTHING": "No creature movement or chat found."
   }
 }

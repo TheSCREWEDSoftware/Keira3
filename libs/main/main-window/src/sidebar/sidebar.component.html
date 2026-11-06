@@ -69,6 +69,33 @@
           </li>
 
           <li>
+            <a id="sniff-to-sql-toggle" href="#" [routerLink]="'sniff-to-sql'">
+              <i class="fa fa-file-import"></i> {{ 'SIDEBAR.SNIFF_TO_SQL' | translate }}
+            </a>
+          </li>
+
+          <li>
+            <a id="find-anywhere-toggle" href="#" [routerLink]="'find-anywhere'">
+              <i class="fa fa-crosshairs"></i> {{ 'SIDEBAR.FIND_ANYWHERE' | translate }}
+            </a>
+          </li>
+
+          <li>
+            <a id="table-browser-toggle" href="#" [routerLink]="'table-browser'">
+              <i class="fa fa-table"></i> {{ 'SIDEBAR.TABLE_BROWSER' | translate }}
+            </a>
+          </li>
+
+          <li>
+            <a id="session-sql-toggle" href="#" [routerLink]="'session-sql'">
+              <i class="fa fa-layer-group"></i> {{ 'SIDEBAR.SESSION_SQL' | translate }}
+              @if (sessionSql.entries().length) {
+                <span class="badge bg-secondary ms-1">{{ sessionSql.entries().length }}</span>
+              }
+            </a>
+          </li>
+
+          <li>
             <a id="collapse-all" (click)="collapseAll()">
               <i class="fas fa-angle-double-up"></i> {{ 'SIDEBAR.COLLAPSE_ALL' | translate }}
             </a>

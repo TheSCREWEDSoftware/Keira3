@@ -1449,9 +1449,39 @@
     "NOT_COPIED": "Falló: no se copió (tus cambios se mantienen)."
   },
   "SESSION_SQL": {
+    "TITLE": "SQL de la sesión",
+    "HELP": "Las consultas apartadas de los editores (\"A la sesión\"), en orden: revísalas, cópialas, guárdalas en un .sql o ejecútalas todas. Se guardan en este equipo hasta que las borres.",
     "ADD": "A la sesión",
     "ADDED": "En la sesión",
-    "ADD_TIP": "Apartar esta consulta con las demás de la sesión (SQL de la sesión) para guardarlas o ejecutarlas juntas"
+    "ADD_TIP": "Apartar esta consulta con las demás de la sesión (SQL de la sesión) para guardarlas o ejecutarlas juntas",
+    "COPY": "Copiar todo",
+    "SAVE": "Guardar como .sql",
+    "EXECUTE": "Ejecutar todo",
+    "CLEAR": "Borrar",
+    "EXECUTED": "Ejecutado.",
+    "EMPTY": "Nada aún: usa \"A la sesión\" junto a la consulta de un editor."
+  },
+  "TABLE_BROWSER": {
+    "TITLE": "Explorador de tablas",
+    "HELP": "Cualquier tabla de la base de datos world, buscada por condiciones en sus columnas (para las tablas sin editor en Keira). Solo lectura.",
+    "TABLE": "Tabla",
+    "LIMIT": "Filas",
+    "ADD_CONDITION": "Condición",
+    "ROWS": "{{ count }} filas"
+  },
+  "FIND_ANYWHERE": {
+    "TITLE": "Buscar en todo",
+    "HELP": "Todas las tablas que usan un id: spawns, relaciones de misiones, botín, vendedores, SmartAI, condiciones, los scripts de la base de datos y más. Como mucho 50 filas por tabla.",
+    "ID": "Id",
+    "NONE": "Nada usa este id.",
+    "KIND": {
+      "creature": "Criatura",
+      "gameobject": "Gameobject",
+      "item": "Objeto",
+      "quest": "Misión",
+      "spell": "Hechizo",
+      "broadcastText": "Texto de difusión"
+    }
   },
   "EXPORT_ENTITY": "Exportar esta entidad como SQL, todas sus tablas",
   "SPELL_INFO": {
@@ -1476,5 +1506,14 @@
     "TRIGGERS": "activa",
     "CHAIN": "objetivos en cadena",
     "NONE": "El cliente del juego no tiene ese hechizo."
+  },
+  "SNIFF_TO_SQL": {
+    "TITLE": "Sniff a SQL",
+    "HELP": "Pega un sniff analizado (la salida de texto de WowPacketParser): los caminos de las criaturas (puntos finales de SMSG_ON_MONSTER_MOVE) se convierten en waypoint_data o waypoints, lo que dijeron (SMSG_MESSAGECHAT) en creature_text, enlazado a broadcast_text por su texto. Revisa el SQL antes de usarlo: los guid del sniff no son los de la base de datos.",
+    "PLACEHOLDER": "ServerToClient: SMSG_ON_MONSTER_MOVE …",
+    "PARSE": "Leer",
+    "SUMMARY": "{{ paths }} caminos, {{ texts }} textos ({{ matched }} encontrados en broadcast_text).",
+    "FIRST_PATH": "Primer id de camino",
+    "NOTHING": "No se encontró movimiento ni chat de criaturas."
   }
 }
