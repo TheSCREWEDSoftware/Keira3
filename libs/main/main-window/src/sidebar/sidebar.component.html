@@ -795,6 +795,33 @@
             </div>
           </li>
 
+          <li class="sidebar-dropdown" [class.active]="menuStates['disables'] === 'down'">
+            <a (click)="toggleState('disables')">
+              <i class="fa fa-ban"></i>
+              <span [translate]="'SIDEBAR.DISABLES.TITLE'"></span>
+            </a>
+
+            <div class="sidebar-submenu" [@slide]="menuStates['disables']">
+              <ul>
+                <li>
+                  <a href="#" routerLinkActive="active" [routerLink]="'disables/select'">
+                    {{ 'SIDEBAR.DISABLES.SEARCH' | translate }}
+                  </a>
+                </li>
+                @if (disablesHandlerService.selected) {
+                  <li>
+                    <a href="#" routerLinkActive="active" [routerLink]="'disables/disables'">
+                      {{ 'SIDEBAR.DISABLES.DISABLES' | translate }}
+                      @if (disablesHandlerService.isDisablesUnsaved()) {
+                        <keira-unsaved-icon />
+                      }
+                    </a>
+                  </li>
+                }
+              </ul>
+            </div>
+          </li>
+
           <li class="sidebar-dropdown" [class.active]="menuStates['creatureImmunities'] === 'down'">
             <a (click)="toggleState('creatureImmunities')">
               <i class="fa fa-shield-halved"></i>

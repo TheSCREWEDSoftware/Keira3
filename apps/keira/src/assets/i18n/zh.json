@@ -223,7 +223,9 @@
       "TITLE": "游戏事件"
     },
     "DISABLES": {
-      "TITLE": "禁用"
+      "TITLE": "禁用",
+      "SEARCH": "搜索禁用",
+      "DISABLES": "此类型的禁用"
     },
     "AREA_TRIGGERS": {
       "TITLE": "区域触发器"
@@ -1447,6 +1449,12 @@
   "QUERY_OUTPUT": {
     "COPIED": "已复制。",
     "NOT_COPIED": "执行失败：未复制（你的更改已保留）。"
+  },
+  "EDITORS_HELP": {
+    "DISABLES": "服务器针对此 sourceType 关闭的内容：每个 entry（法术、任务、地图……）及其 flags（按类型：地图 1 普通、2 英雄……；法术 1 玩家、2 生物、4 宠物……）和 params（地图或区域，用逗号分隔）。"
+  },
+  "DISABLES": {
+    "OPEN_TYPE": "打开某个来源类型的禁用："
   },
   "SESSION_SQL": {
     "ADD": "加入会话",

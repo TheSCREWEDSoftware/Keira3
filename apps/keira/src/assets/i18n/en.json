@@ -223,7 +223,9 @@
       "TITLE": "Game events"
     },
     "DISABLES": {
-      "TITLE": "Disables"
+      "TITLE": "Disables",
+      "SEARCH": "Search disables",
+      "DISABLES": "Disables of this type"
     },
     "AREA_TRIGGERS": {
       "TITLE": "Area triggers"
@@ -1447,6 +1449,12 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copied.",
     "NOT_COPIED": "It failed: not copied (your changes are kept)."
+  },
+  "EDITORS_HELP": {
+    "DISABLES": "What the server turns off, for this sourceType: each entry (a spell, quest, map…) with its flags (by type: maps 1 normal, 2 heroic…; spells 1 player, 2 creature, 4 pet…) and params (map ids or areas, comma-separated)."
+  },
+  "DISABLES": {
+    "OPEN_TYPE": "Open the disables of a source type:"
   },
   "SESSION_SQL": {
     "ADD": "To the session",

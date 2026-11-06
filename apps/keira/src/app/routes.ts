@@ -103,6 +103,7 @@ import {
   SelectCreatureImmunitiesComponent,
 } from '@keira/features/creature-immunities';
 import { SelectTrainerComponent, TrainerComponent, TrainerHandlerService, TrainerSpellComponent } from '@keira/features/trainer';
+import { DisablesHandlerService, SelectDisablesComponent, DisablesComponent } from '@keira/features/disables';
 import { UnusedGuidSearchComponent } from '@keira/features/unused-guid-search';
 
 export const KEIRA_ROUTES: Routes = [
@@ -524,6 +525,21 @@ export const KEIRA_ROUTES: Routes = [
         path: 'tele',
         component: GameTeleComponent,
         canActivate: [GameTeleHandlerService],
+      },
+    ],
+  },
+
+  {
+    path: 'disables',
+    children: [
+      {
+        path: 'disables',
+        component: DisablesComponent,
+        canActivate: [DisablesHandlerService],
+      },
+      {
+        path: 'select',
+        component: SelectDisablesComponent,
       },
     ],
   },

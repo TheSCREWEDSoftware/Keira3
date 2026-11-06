@@ -41,6 +41,9 @@
       "@keira/features/creature-immunities": [
         "libs/features/creature-immunities/src/index.ts"
       ],
+      "@keira/features/disables": [
+        "libs/features/disables/src/index.ts"
+      ],
       "@keira/features/dashboard": [
         "libs/features/dashboard/src/index.ts"
       ],

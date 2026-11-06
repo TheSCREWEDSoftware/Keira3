@@ -223,7 +223,9 @@
       "TITLE": "Eventos del juego"
     },
     "DISABLES": {
-      "TITLE": "Desactivaciones"
+      "TITLE": "Desactivaciones",
+      "SEARCH": "Buscar desactivaciones",
+      "DISABLES": "Desactivaciones de este tipo"
     },
     "AREA_TRIGGERS": {
       "TITLE": "Activadores de área"
@@ -1447,6 +1449,12 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copiada.",
     "NOT_COPIED": "Falló: no se copió (tus cambios se mantienen)."
+  },
+  "EDITORS_HELP": {
+    "DISABLES": "Lo que el servidor desactiva, para este sourceType: cada entry (un hechizo, misión, mapa…) con sus flags (según el tipo: mapas 1 normal, 2 heroico…; hechizos 1 jugador, 2 criatura, 4 mascota…) y params (mapas o zonas, separados por comas)."
+  },
+  "DISABLES": {
+    "OPEN_TYPE": "Abrir las desactivaciones de un tipo:"
   },
   "SESSION_SQL": {
     "ADD": "A la sesión",
