@@ -54,6 +54,10 @@ import {
   FishingLootTemplateComponent,
   MailLootHandlerService,
   MailLootTemplateComponent,
+  FishingLootCopyComponent,
+  SpellLootCopyComponent,
+  MailLootCopyComponent,
+  ReferenceLootCopyComponent,
   ReferenceLootHandlerService,
   ReferenceLootTemplateComponent,
   SelectFishingLootComponent,
@@ -96,13 +100,19 @@ import {
   AcoreStringLocaleComponent,
   SelectAcoreStringComponent,
 } from '@keira/features/texts';
-import { GameTeleComponent, GameTeleHandlerService, SelectGameTeleComponent } from '@keira/features/game-tele';
+import { GameTeleComponent, GameTeleCopyComponent, GameTeleHandlerService, SelectGameTeleComponent } from '@keira/features/game-tele';
 import {
   CreatureImmunitiesComponent,
   CreatureImmunitiesHandlerService,
   SelectCreatureImmunitiesComponent,
 } from '@keira/features/creature-immunities';
-import { SelectTrainerComponent, TrainerComponent, TrainerHandlerService, TrainerSpellComponent } from '@keira/features/trainer';
+import {
+  SelectTrainerComponent,
+  TrainerComponent,
+  TrainerCopyComponent,
+  TrainerHandlerService,
+  TrainerSpellComponent,
+} from '@keira/features/trainer';
 import { UnusedGuidSearchComponent } from '@keira/features/unused-guid-search';
 
 export const KEIRA_ROUTES: Routes = [
@@ -374,6 +384,16 @@ export const KEIRA_ROUTES: Routes = [
         canActivate: [ReferenceLootHandlerService],
       },
       {
+        path: 'reference-copy',
+        component: ReferenceLootCopyComponent,
+        canActivate: [ReferenceLootHandlerService],
+      },
+      {
+        path: 'spell-copy',
+        component: SpellLootCopyComponent,
+        canActivate: [SpellLootHandlerService],
+      },
+      {
         path: 'select-spell',
         component: SelectSpellLootComponent,
       },
@@ -392,12 +412,22 @@ export const KEIRA_ROUTES: Routes = [
         canActivate: [FishingLootHandlerService],
       },
       {
+        path: 'fishing-copy',
+        component: FishingLootCopyComponent,
+        canActivate: [FishingLootHandlerService],
+      },
+      {
         path: 'select-mail',
         component: SelectMailLootComponent,
       },
       {
         path: 'mail',
         component: MailLootTemplateComponent,
+        canActivate: [MailLootHandlerService],
+      },
+      {
+        path: 'mail-copy',
+        component: MailLootCopyComponent,
         canActivate: [MailLootHandlerService],
       },
     ],
@@ -521,6 +551,11 @@ export const KEIRA_ROUTES: Routes = [
         component: SelectGameTeleComponent,
       },
       {
+        path: 'copy',
+        component: GameTeleCopyComponent,
+        canActivate: [GameTeleHandlerService],
+      },
+      {
         path: 'tele',
         component: GameTeleComponent,
         canActivate: [GameTeleHandlerService],
@@ -548,6 +583,11 @@ export const KEIRA_ROUTES: Routes = [
       {
         path: 'select',
         component: SelectTrainerComponent,
+      },
+      {
+        path: 'copy',
+        component: TrainerCopyComponent,
+        canActivate: [TrainerHandlerService],
       },
       {
         path: 'trainer',
