@@ -43,11 +43,14 @@ import {
   DisenchantLootTemplateComponent,
   ItemEnchantmentTemplateComponent,
   ItemHandlerService,
+  ItemCopyComponent,
   ItemLootTemplateComponent,
+  ItemSourcesComponent,
   ItemTemplateComponent,
   MillingLootTemplateComponent,
   ProspectingLootTemplateComponent,
   SelectItemComponent,
+  ItemTemplateLocaleComponent,
 } from '@keira/features/item';
 import {
   FishingLootHandlerService,
@@ -326,12 +329,22 @@ export const KEIRA_ROUTES: Routes = [
     path: 'item',
     children: [
       {
+        path: 'item-template-locale',
+        component: ItemTemplateLocaleComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
         path: 'select',
         component: SelectItemComponent,
       },
       {
         path: 'item-template',
         component: ItemTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'copy',
+        component: ItemCopyComponent,
         canActivate: [ItemHandlerService],
       },
       {
@@ -342,6 +355,11 @@ export const KEIRA_ROUTES: Routes = [
       {
         path: 'item-loot-template',
         component: ItemLootTemplateComponent,
+        canActivate: [ItemHandlerService],
+      },
+      {
+        path: 'item-sources',
+        component: ItemSourcesComponent,
         canActivate: [ItemHandlerService],
       },
       {

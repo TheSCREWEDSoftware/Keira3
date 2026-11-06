@@ -142,7 +142,9 @@
       "ITEM_LOOT": "物品掉落",
       "DISENCHANT_LOOT": "分解掉落",
       "PROSPECTING_LOOT": "采矿掉落",
-      "MILLING_LOOT": "研磨掉落"
+      "MILLING_LOOT": "研磨掉落",
+      "SOURCES": "来源",
+      "ITEM_TEMPLATE_LOCALE": "物品模板本地化"
     },
     "OTHER_LOOTS": {
       "TITLE": "其它掉落",
@@ -627,6 +629,25 @@
       "SPELL_CATEGORY_COOLDOWNS": "冷却时间(以毫秒为单位)，该冷却时间适用于触发法术所在类别的所有其他法术。使用-1使用默认的法术冷却时间。",
       "REQUIRED_FACTION": "使用物品所需的阵营，当引用物品所需的阵营ID时，它是选择器中左侧的'ID'列，更多信息请查看wiki中的'faction'。",
       "REQUIRED_FACTION_RANK": "指定阵营所需的等级值。"
+    },
+    "SOURCES": {
+      "HELP": "此物品的来源（只读）：包含它的掉落表及掉落者、使用包含它的引用掉落的掉落表、出售它的商人以及相关任务。",
+      "RELOAD": "重新读取",
+      "READING": "读取中…",
+      "LOOT": "掉落",
+      "LOOT_TABLE": "掉落表",
+      "COUNT": "数量",
+      "USED_BY": "掉落者 / 使用者",
+      "THROUGH_REFERENCE": "通过引用掉落",
+      "VENDORS": "商人",
+      "QUESTS": "任务",
+      "HOW": "方式",
+      "NONE": "无。",
+      "QUEST_REWARD": "奖励",
+      "QUEST_CHOICE": "奖励（可选）",
+      "QUEST_REQUIRED": "需要",
+      "QUEST_START": "开始任务",
+      "QUEST_DROP": "任务掉落"
     }
   },
   "LOOT_EDITOR": {

@@ -142,7 +142,9 @@
       "ITEM_LOOT": "Item Loot",
       "DISENCHANT_LOOT": "Disenchant Loot",
       "PROSPECTING_LOOT": "Prospecting Loot",
-      "MILLING_LOOT": "Milling Loot"
+      "MILLING_LOOT": "Milling Loot",
+      "SOURCES": "Where it comes from",
+      "ITEM_TEMPLATE_LOCALE": "Item Template Locale"
     },
     "OTHER_LOOTS": {
       "TITLE": "Other Loots",
@@ -627,6 +629,25 @@
       "SPELL_CATEGORY_COOLDOWNS": "The cooldown time in milliseconds that is applied to all other spells in the category that the triggered spell is also in. Use -1 to use the default spell cooldown.",
       "REQUIRED_FACTION": "Required Faction to be able to use the item, when refering to the Item Faction ID required, it's the column on the left 'ID' in the selector, more information check 'faction' in the wiki.",
       "REQUIRED_FACTION_RANK": "The rank value required for the specified faction."
+    },
+    "SOURCES": {
+      "HELP": "Where this item comes from (read only): the loot tables having it and what drops them, the loot tables using the reference loots having it, the vendors selling it and the quests about it.",
+      "RELOAD": "Read again",
+      "READING": "Reading…",
+      "LOOT": "Loot",
+      "LOOT_TABLE": "Loot table",
+      "COUNT": "Count",
+      "USED_BY": "Dropped by / used by",
+      "THROUGH_REFERENCE": "Through reference loot",
+      "VENDORS": "Vendors",
+      "QUESTS": "Quests",
+      "HOW": "How",
+      "NONE": "None.",
+      "QUEST_REWARD": "Reward",
+      "QUEST_CHOICE": "Reward (choice)",
+      "QUEST_REQUIRED": "Required",
+      "QUEST_START": "Starts the quest",
+      "QUEST_DROP": "Quest drop"
     }
   },
   "LOOT_EDITOR": {

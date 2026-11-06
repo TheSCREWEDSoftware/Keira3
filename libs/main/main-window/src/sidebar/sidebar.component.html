@@ -451,6 +451,14 @@
                       </a>
                     </li>
                     <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/item-template-locale'">
+                        {{ 'SIDEBAR.ITEM.ITEM_TEMPLATE_LOCALE' | translate }}
+                        @if (itemHandlerService.isItemTemplateLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
                       <a href="#" routerLinkActive="active" [routerLink]="'item/item-loot-template'">
                         {{ 'SIDEBAR.ITEM.ITEM_LOOT' | translate }}
                         @if (itemHandlerService.isItemLootTemplateUnsaved()) {
@@ -480,6 +488,11 @@
                         @if (itemHandlerService.isMillingLootTemplateUnsaved()) {
                           <keira-unsaved-icon />
                         }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'item/item-sources'">
+                        {{ 'SIDEBAR.ITEM.SOURCES' | translate }}
                       </a>
                     </li>
                   }

@@ -142,7 +142,9 @@
       "ITEM_LOOT": "Botín de Item",
       "DISENCHANT_LOOT": "Botín de Desencantamiento",
       "PROSPECTING_LOOT": "Botín por Prospectar",
-      "MILLING_LOOT": "Botín por Moler"
+      "MILLING_LOOT": "Botín por Moler",
+      "SOURCES": "De dónde sale",
+      "ITEM_TEMPLATE_LOCALE": "Locale de Item Template"
     },
     "OTHER_LOOTS": {
       "TITLE": "Otro Tipo de Botines",
@@ -627,6 +629,25 @@
       "SPELL_CATEGORY_COOLDOWNS": "El Tiempo de Enfriamiento (la recarga) en milisegundos que es aplicada a todos los demás Hechizos que caben dentro de la Categoría a la que también pertenece el Hechizo. Utilice el valor -1 en este campo para el Tiempo de Reutilización de Hechizos que viene por defecto en el mismo.",
       "REQUIRED_FACTION": "Facción requerida para poder usar el objeto, cuando se refiere al ID de Facción del Objeto requerido, es la columna de la izquierda 'ID' en el selector, para más información consulta 'faction' en la wiki.",
       "REQUIRED_FACTION_RANK": "El rango requerido para la facción especificada."
+    },
+    "SOURCES": {
+      "HELP": "De dónde sale este objeto (solo lectura): las tablas de botín que lo tienen y qué las suelta, las tablas que usan los botines de referencia que lo tienen, los vendedores que lo venden y las misiones relacionadas.",
+      "RELOAD": "Leer de nuevo",
+      "READING": "Leyendo…",
+      "LOOT": "Botín",
+      "LOOT_TABLE": "Tabla de botín",
+      "COUNT": "Cantidad",
+      "USED_BY": "Lo suelta / lo usa",
+      "THROUGH_REFERENCE": "A través de botín de referencia",
+      "VENDORS": "Vendedores",
+      "QUESTS": "Misiones",
+      "HOW": "Cómo",
+      "NONE": "Ninguno.",
+      "QUEST_REWARD": "Recompensa",
+      "QUEST_CHOICE": "Recompensa (a elegir)",
+      "QUEST_REQUIRED": "Requerido",
+      "QUEST_START": "Inicia la misión",
+      "QUEST_DROP": "Botín de misión"
     }
   },
   "LOOT_EDITOR": {
