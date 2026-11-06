@@ -229,6 +229,10 @@
       "TITLE": "Area triggers"
     },
     "DB_SCRIPTS": {
+      "EVENT_SCRIPTS": "Event scripts",
+      "SELECT_EVENT_SCRIPTS": "Search event scripts",
+      "SPELL_SCRIPTS": "Spell scripts",
+      "SELECT_SPELL_SCRIPTS": "Search spell scripts",
       "TITLE": "Event and spell scripts"
     },
     "SESSION_SQL": "Session SQL",
@@ -1447,6 +1451,15 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copied.",
     "NOT_COPIED": "It failed: not copied (your changes are kept)."
+  },
+  "EDITORS_HELP": {
+    "EVENT_SCRIPTS": "The steps of the scripts run by events (gameobject and spell events, taxi paths): each with its delay (seconds), command (as waypoint_scripts) and data.",
+    "SPELL_SCRIPTS": "The steps run by a spell's SCRIPT_EFFECT/DUMMY effects (effIndex), each with its delay (seconds), command and data."
+  },
+  "DB_SCRIPTS": {
+    "STEPS": "Steps",
+    "COMMANDS": "Commands",
+    "GAMEOBJECTS": "Gameobjects starting it"
   },
   "SESSION_SQL": {
     "ADD": "To the session",

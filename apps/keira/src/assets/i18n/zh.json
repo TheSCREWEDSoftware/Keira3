@@ -229,6 +229,10 @@
       "TITLE": "区域触发器"
     },
     "DB_SCRIPTS": {
+      "EVENT_SCRIPTS": "事件脚本",
+      "SELECT_EVENT_SCRIPTS": "搜索事件脚本",
+      "SPELL_SCRIPTS": "法术脚本",
+      "SELECT_SPELL_SCRIPTS": "搜索法术脚本",
       "TITLE": "事件和法术脚本"
     },
     "SESSION_SQL": "会话 SQL",
@@ -1447,6 +1451,15 @@
   "QUERY_OUTPUT": {
     "COPIED": "已复制。",
     "NOT_COPIED": "执行失败：未复制（你的更改已保留）。"
+  },
+  "EDITORS_HELP": {
+    "EVENT_SCRIPTS": "由事件（游戏对象和法术事件、飞行路线）运行的脚本步骤：每步的延迟（秒）、命令（同 waypoint_scripts）和数据。",
+    "SPELL_SCRIPTS": "由法术的 SCRIPT_EFFECT/DUMMY 效果（effIndex）运行的步骤，每步含延迟（秒）、命令和数据。"
+  },
+  "DB_SCRIPTS": {
+    "STEPS": "步骤",
+    "COMMANDS": "命令",
+    "GAMEOBJECTS": "启动它的游戏对象"
   },
   "SESSION_SQL": {
     "ADD": "加入会话",

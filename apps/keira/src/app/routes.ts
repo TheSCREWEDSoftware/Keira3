@@ -103,6 +103,14 @@ import {
   SelectCreatureImmunitiesComponent,
 } from '@keira/features/creature-immunities';
 import { SelectTrainerComponent, TrainerComponent, TrainerHandlerService, TrainerSpellComponent } from '@keira/features/trainer';
+import {
+  EventScriptsComponent,
+  EventScriptsHandlerService,
+  SelectEventScriptsComponent,
+  SelectSpellScriptsComponent,
+  SpellScriptsComponent,
+  SpellScriptsHandlerService,
+} from '@keira/features/db-scripts';
 import { UnusedGuidSearchComponent } from '@keira/features/unused-guid-search';
 
 export const KEIRA_ROUTES: Routes = [
@@ -528,6 +536,29 @@ export const KEIRA_ROUTES: Routes = [
     ],
   },
 
+  {
+    path: 'db-scripts',
+    children: [
+      {
+        path: 'select-event-scripts',
+        component: SelectEventScriptsComponent,
+      },
+      {
+        path: 'event-scripts',
+        component: EventScriptsComponent,
+        canActivate: [EventScriptsHandlerService],
+      },
+      {
+        path: 'select-spell-scripts',
+        component: SelectSpellScriptsComponent,
+      },
+      {
+        path: 'spell-scripts',
+        component: SpellScriptsComponent,
+        canActivate: [SpellScriptsHandlerService],
+      },
+    ],
+  },
   {
     path: 'creature-immunities',
     children: [

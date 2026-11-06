@@ -229,6 +229,10 @@
       "TITLE": "Activadores de área"
     },
     "DB_SCRIPTS": {
+      "EVENT_SCRIPTS": "Scripts de eventos",
+      "SELECT_EVENT_SCRIPTS": "Buscar scripts de eventos",
+      "SPELL_SCRIPTS": "Scripts de hechizos",
+      "SELECT_SPELL_SCRIPTS": "Buscar scripts de hechizos",
       "TITLE": "Scripts de eventos y hechizos"
     },
     "SESSION_SQL": "SQL de la sesión",
@@ -1447,6 +1451,15 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copiada.",
     "NOT_COPIED": "Falló: no se copió (tus cambios se mantienen)."
+  },
+  "EDITORS_HELP": {
+    "EVENT_SCRIPTS": "Los pasos de los scripts que lanzan los eventos (eventos de objetos y hechizos, rutas de vuelo): cada uno con su retraso (segundos), comando (como waypoint_scripts) y datos.",
+    "SPELL_SCRIPTS": "Los pasos que ejecutan los efectos SCRIPT_EFFECT/DUMMY de un hechizo (effIndex), cada uno con su retraso (segundos), comando y datos."
+  },
+  "DB_SCRIPTS": {
+    "STEPS": "Pasos",
+    "COMMANDS": "Comandos",
+    "GAMEOBJECTS": "Objetos que lo inician"
   },
   "SESSION_SQL": {
     "ADD": "A la sesión",
