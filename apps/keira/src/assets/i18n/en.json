@@ -189,7 +189,8 @@
     "SPELL_DBC_OVERRIDES": {
       "TITLE": "Spell DBC overrides",
       "SEARCH_SPELL": "Search Spell",
-      "SPELL_DBC_EDITOR": "Spell DBC editor"
+      "SPELL_DBC_EDITOR": "Spell DBC editor",
+      "SPELL_AREA": "Spell area"
     },
     "GAME_TELE": {
       "TITLE": "Game Teleport",
@@ -1447,6 +1448,9 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copied.",
     "NOT_COPIED": "It failed: not copied (your changes are kept)."
+  },
+  "EDITORS_HELP": {
+    "SPELL_AREA": "Where the spell is applied (area), and to whom: quests started/ended with their status masks, an aura, races (racemask), gender (2 = both); autocast 1 casts it on entering."
   },
   "SESSION_SQL": {
     "ADD": "To the session",

@@ -763,6 +763,14 @@
                       }
                     </a>
                   </li>
+                  <li>
+                    <a href="#" routerLinkActive="active" [routerLink]="'spell/spell-area'">
+                      {{ 'SIDEBAR.SPELL_DBC_OVERRIDES.SPELL_AREA' | translate }}
+                      @if (spellHandlerService.isSpellAreaUnsaved()) {
+                        <keira-unsaved-icon />
+                      }
+                    </a>
+                  </li>
                 }
               </ul>
             </div>

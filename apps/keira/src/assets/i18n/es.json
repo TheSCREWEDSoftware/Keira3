@@ -189,7 +189,8 @@
     "SPELL_DBC_OVERRIDES": {
       "TITLE": "Anulaciones de Hechizos (Spell DBC)",
       "SEARCH_SPELL": "Buscar Hechizos",
-      "SPELL_DBC_EDITOR": "Editor de Hechizos (Spell DBC)"
+      "SPELL_DBC_EDITOR": "Editor de Hechizos (Spell DBC)",
+      "SPELL_AREA": "Spell area"
     },
     "GAME_TELE": {
       "TITLE": "Teletransporte",
@@ -1447,6 +1448,9 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copiada.",
     "NOT_COPIED": "Falló: no se copió (tus cambios se mantienen)."
+  },
+  "EDITORS_HELP": {
+    "SPELL_AREA": "Dónde se aplica el hechizo (area) y a quién: misiones empezadas/terminadas con sus máscaras de estado, un aura, razas (racemask), género (2 = ambos); autocast 1 lo lanza al entrar."
   },
   "SESSION_SQL": {
     "ADD": "A la sesión",

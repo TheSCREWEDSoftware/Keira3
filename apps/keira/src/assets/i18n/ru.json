@@ -189,7 +189,8 @@
     "SPELL_DBC_OVERRIDES": {
       "TITLE": "Переопределения Spell DBC",
       "SEARCH_SPELL": "Искать заклинание",
-      "SPELL_DBC_EDITOR": "Редактор Spell DBC"
+      "SPELL_DBC_EDITOR": "Редактор Spell DBC",
+      "SPELL_AREA": "Spell area"
     },
     "GAME_TELE": {
       "TITLE": "Телепортация",
@@ -1447,6 +1448,9 @@
   "QUERY_OUTPUT": {
     "COPIED": "Скопировано.",
     "NOT_COPIED": "Ошибка: не скопировано (изменения сохранены)."
+  },
+  "EDITORS_HELP": {
+    "SPELL_AREA": "Где применяется заклинание (area) и к кому: начатые/завершённые задания с масками статуса, аура, расы (racemask), пол (2 = оба); autocast 1 — накладывать при входе."
   },
   "SESSION_SQL": {
     "ADD": "В сессию",

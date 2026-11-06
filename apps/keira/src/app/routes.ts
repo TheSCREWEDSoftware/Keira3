@@ -78,7 +78,13 @@ import {
   SelectQuestComponent,
 } from '@keira/features/quest';
 import { SaiFullEditorComponent, SaiSearchEntityComponent, SaiSearchExistingComponent } from '@keira/features/smart-scripts';
-import { SelectSpellComponent, SpellDbcComponent } from '@keira/features/spell';
+import {
+  SelectSpellComponent,
+  SpellDbcComponent,
+  SpellCopyComponent,
+  SpellHandlerService,
+  SpellAreaComponent,
+} from '@keira/features/spell';
 import { SqlEditorComponent } from '@keira/features/sql-editor';
 import { SaiHandlerService } from '@keira/shared/sai-editor';
 import {
@@ -504,12 +510,22 @@ export const KEIRA_ROUTES: Routes = [
     path: 'spell',
     children: [
       {
+        path: 'spell-area',
+        component: SpellAreaComponent,
+        canActivate: [SpellHandlerService],
+      },
+      {
         path: 'select',
         component: SelectSpellComponent,
       },
       {
         path: 'spell-dbc',
         component: SpellDbcComponent,
+      },
+      {
+        path: 'copy',
+        component: SpellCopyComponent,
+        canActivate: [SpellHandlerService],
       },
     ],
   },
