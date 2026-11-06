@@ -173,7 +173,8 @@
       "TITLE": "Разговоры",
       "SELECT_GOSSIP_MENU": "Выбрать меню разговоров",
       "GOSSIP_MENU": "Меню диалогов",
-      "GOSSIP_MENU_OPTION": "Пункт меню диалогов"
+      "GOSSIP_MENU_OPTION": "Пункт меню диалогов",
+      "GOSSIP_MENU_OPTION_LOCALE": "Gossip Menu Option (локализация)"
     },
     "CONDITIONS": {
       "TITLE": "Условия",

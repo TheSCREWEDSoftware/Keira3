@@ -676,6 +676,14 @@
                         }
                       </a>
                     </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gossip/gossip-menu-option-locale'">
+                        {{ 'SIDEBAR.GOSSIP.GOSSIP_MENU_OPTION_LOCALE' | translate }}
+                        @if (gossipHandlerService.isGossipMenuOptionLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
                   }
                 }
               </ul>

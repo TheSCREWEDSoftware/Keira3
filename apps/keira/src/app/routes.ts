@@ -38,7 +38,14 @@ import {
   SaiGameobjectComponent,
   SelectGameobjectComponent,
 } from '@keira/features/gameobject';
-import { GossipHandlerService, GossipMenuComponent, GossipMenuOptionComponent, SelectGossipComponent } from '@keira/features/gossip';
+import {
+  GossipHandlerService,
+  GossipMenuComponent,
+  GossipMenuOptionComponent,
+  SelectGossipComponent,
+  GossipCopyComponent,
+  GossipMenuOptionLocaleComponent,
+} from '@keira/features/gossip';
 import {
   DisenchantLootTemplateComponent,
   ItemEnchantmentTemplateComponent,
@@ -452,8 +459,18 @@ export const KEIRA_ROUTES: Routes = [
     path: 'gossip',
     children: [
       {
+        path: 'gossip-menu-option-locale',
+        component: GossipMenuOptionLocaleComponent,
+        canActivate: [GossipHandlerService],
+      },
+      {
         path: 'select',
         component: SelectGossipComponent,
+      },
+      {
+        path: 'copy',
+        component: GossipCopyComponent,
+        canActivate: [GossipHandlerService],
       },
       {
         path: 'gossip-menu',
