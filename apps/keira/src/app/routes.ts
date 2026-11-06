@@ -29,6 +29,7 @@ import {
 } from '@keira/features/creature';
 import {
   GameobjectHandlerService,
+  GameobjectCopyComponent,
   GameobjectLootTemplateComponent,
   GameobjectQuestitemComponent,
   GameobjectSpawnAddonComponent,
@@ -37,6 +38,7 @@ import {
   GameobjectTemplateComponent,
   SaiGameobjectComponent,
   SelectGameobjectComponent,
+  GameobjectTemplateLocaleComponent,
 } from '@keira/features/gameobject';
 import { GossipHandlerService, GossipMenuComponent, GossipMenuOptionComponent, SelectGossipComponent } from '@keira/features/gossip';
 import {
@@ -282,12 +284,22 @@ export const KEIRA_ROUTES: Routes = [
     path: 'gameobject',
     children: [
       {
+        path: 'gameobject-template-locale',
+        component: GameobjectTemplateLocaleComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
         path: 'select',
         component: SelectGameobjectComponent,
       },
       {
         path: 'gameobject-template',
         component: GameobjectTemplateComponent,
+        canActivate: [GameobjectHandlerService],
+      },
+      {
+        path: 'copy',
+        component: GameobjectCopyComponent,
         canActivate: [GameobjectHandlerService],
       },
       {

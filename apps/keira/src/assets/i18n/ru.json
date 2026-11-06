@@ -132,7 +132,8 @@
       "GAMEOBJECT_LOOT": "Добыча с объекта",
       "SPAWN": "Точка появления",
       "SPAWN_ADDON": "Дополнение появления",
-      "SMART_AI": "SmartAI"
+      "SMART_AI": "SmartAI",
+      "GAMEOBJECT_TEMPLATE_LOCALE": "Gameobject Template (локализация)"
     },
     "ITEM": {
       "TITLE": "Предметы",

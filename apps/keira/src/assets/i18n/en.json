@@ -132,7 +132,8 @@
       "GAMEOBJECT_LOOT": "Gameobject Loot",
       "SPAWN": "Spawn",
       "SPAWN_ADDON": "Spawn Addon",
-      "SMART_AI": "SmartAI"
+      "SMART_AI": "SmartAI",
+      "GAMEOBJECT_TEMPLATE_LOCALE": "Gameobject Template Locale"
     },
     "ITEM": {
       "TITLE": "Item",

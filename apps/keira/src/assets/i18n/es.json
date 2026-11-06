@@ -132,7 +132,8 @@
       "GAMEOBJECT_LOOT": "Botín de Objeto del Juego",
       "SPAWN": "Aparición",
       "SPAWN_ADDON": "Addon de Spawn",
-      "SMART_AI": "SmartAI"
+      "SMART_AI": "SmartAI",
+      "GAMEOBJECT_TEMPLATE_LOCALE": "Locale de Gameobject Template"
     },
     "ITEM": {
       "TITLE": "Objeto",

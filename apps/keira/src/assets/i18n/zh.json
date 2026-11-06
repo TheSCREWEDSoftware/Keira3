@@ -132,7 +132,8 @@
       "GAMEOBJECT_LOOT": "游戏对象掉落",
       "SPAWN": "游戏对象刷新",
       "SPAWN_ADDON": "对象刷新插件",
-      "SMART_AI": "SmartAI"
+      "SMART_AI": "SmartAI",
+      "GAMEOBJECT_TEMPLATE_LOCALE": "游戏对象模板本地化"
     },
     "ITEM": {
       "TITLE": "物品",

@@ -375,6 +375,14 @@
                       </a>
                     </li>
                     <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-template-locale'">
+                        {{ 'SIDEBAR.GAME_OBJECT.GAMEOBJECT_TEMPLATE_LOCALE' | translate }}
+                        @if (gameobjectHandlerService.isGameobjectTemplateLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
                       <a href="#" routerLinkActive="active" [routerLink]="'gameobject/gameobject-questitem'">
                         {{ 'SIDEBAR.GAME_OBJECT.QUEST_ITEMS' | translate }}
                         @if (gameobjectHandlerService.isGameobjectQuestitemUnsaved()) {
