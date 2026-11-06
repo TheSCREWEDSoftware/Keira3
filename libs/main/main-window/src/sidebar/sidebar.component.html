@@ -235,9 +235,49 @@
                       </a>
                     </li>
                     <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-text-locale'">
+                        {{ 'SIDEBAR.CREATURE.CREATURE_TEXT_LOCALE' | translate }}
+                        @if (creatureHandlerService.isCreatureTextLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-template-locale'">
+                        {{ 'SIDEBAR.CREATURE.CREATURE_TEMPLATE_LOCALE' | translate }}
+                        @if (creatureHandlerService.isCreatureTemplateLocaleUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
                       <a href="#" routerLinkActive="active" [routerLink]="'creature/creature-formations'">
                         {{ 'SIDEBAR.CREATURE.FORMATIONS' | translate }}
                         @if (creatureHandlerService.isCreatureFormationUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/vehicle-template-accessory'">
+                        {{ 'SIDEBAR.CREATURE.VEHICLE_TEMPLATE_ACCESSORY' | translate }}
+                        @if (creatureHandlerService.isVehicleTemplateAccessoryUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/vehicle-accessory'">
+                        {{ 'SIDEBAR.CREATURE.VEHICLE_ACCESSORY' | translate }}
+                        @if (creatureHandlerService.isVehicleAccessoryUnsaved()) {
+                          <keira-unsaved-icon />
+                        }
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" routerLinkActive="active" [routerLink]="'creature/npc-spellclick-spells'">
+                        {{ 'SIDEBAR.CREATURE.NPC_SPELLCLICK_SPELLS' | translate }}
+                        @if (creatureHandlerService.isNpcSpellclickSpellsUnsaved()) {
                           <keira-unsaved-icon />
                         }
                       </a>

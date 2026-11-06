@@ -107,7 +107,12 @@
       "SPAWN_ADDON": "Addon de Spawn",
       "SMARTAI": "SmartAI",
       "TEXT": "Texto",
-      "FORMATIONS": "Formaciones"
+      "FORMATIONS": "Formaciones",
+      "CREATURE_TEMPLATE_LOCALE": "Locale de Creature Template",
+      "CREATURE_TEXT_LOCALE": "Locale de Creature Text",
+      "NPC_SPELLCLICK_SPELLS": "Spell click",
+      "VEHICLE_TEMPLATE_ACCESSORY": "Accesorios de vehículo",
+      "VEHICLE_ACCESSORY": "Accesorios de vehículo (spawns)"
     },
     "QUEST": {
       "TITLE": "Misión",
@@ -335,7 +340,15 @@
       "ITEMID2": "Este es el número de objeto del equipamiento usado en la mano izquierda de Item.dbc.",
       "ITEMID3": "Este es el número de objeto del equipamiento usado en la ranura de distancia de Item.dbc.",
       "FACTION": "Cuando se refiere al ID de Facción de la Criatura, es la columna de la izquierda 'ID' en el selector, para más información consulta 'faction' en la wiki.",
-      "IMMUNITIES": "Entry here refers to the ID in creature_immunities"
+      "IMMUNITIES": "Entry here refers to the ID in creature_immunities",
+      "FINAL_STATS": "Con los modificadores (creature_classlevelstats de su clase):",
+      "FINAL_HEALTH": "Vida",
+      "FINAL_MANA": "Maná",
+      "FINAL_ARMOR": "Armadura",
+      "FINAL_DAMAGE": "Daño cuerpo a cuerpo",
+      "FINAL_ATTACK_POWER": "Poder de ataque",
+      "FINAL_STATS_HELP": "Como los calcula el núcleo, antes de auras y dificultad; daño según BaseAttackTime. Experiencia × {{ xp }}.",
+      "FINAL_STATS_NONE": "no hay fila de creature_classlevelstats para su clase y niveles."
     },
     "TEMPLATE_ADDON": {
       "ENTRY": "Enlazado con creature_template.entry (ID de la Criatura)",
@@ -396,8 +409,20 @@
       "BROADCAST_TEXT_ID": "ID del texto equivalente encontrado en broadcast_text",
       "SEARCH_BROADCAST_TEXT": "Buscar en MaleText o FemaleText",
       "COPY_TO_ROW": "Copiar a la fila seleccionada",
-      "MATCHED_ROW": "La fila que coincidió con tu búsqueda"
-    }
+      "MATCHED_ROW": "La fila que coincidió con tu búsqueda",
+      "COMMENT_FROM_CREATURE": "Usar el nombre de la criatura",
+      "TEXT_FROM_BROADCAST_TEXT": "Leer el texto del BroadcastTextId (MaleText, o FemaleText)",
+      "NO_BROADCAST_TEXT_ID": "Primero pon un BroadcastTextId.",
+      "BROADCAST_TEXT_NOT_FOUND": "No hay broadcast_text con este ID (o no tiene texto).",
+      "BROADCAST_TEXT_UNREADABLE": "No se pudo leer el broadcast_text (mira el error en la consola)."
+    },
+    "FORMATION_LEADER": "Formación del líder (guid del spawn)",
+    "FORMATION_LEADS": "{{guid}}: lidera a {{count}} (mapa {{map}})",
+    "FORMATION_LED_BY": "{{guid}}: líder del spawn {{member}}",
+    "FORMATION_NONE": "{{guid}}: sin formación aún (mapa {{map}})",
+    "FORMATION_NO_SPAWNS": "Esta criatura no tiene spawns: una formación se hace con spawns (guids de creature).",
+    "FORMATION_HELP": "creature_formations es por spawn: sus filas son los miembros del líder (la fila del propio líder lo tiene como miembro).",
+    "FORMATION_UNSAVED": "Ejecuta o descarta los cambios para elegir otro líder."
   },
   "QUEST": {
     "TEMPLATE": {
@@ -1447,6 +1472,11 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copiada.",
     "NOT_COPIED": "Falló: no se copió (tus cambios se mantienen)."
+  },
+  "EDITORS_HELP": {
+    "NPC_SPELLCLICK_SPELLS": "Los hechizos lanzados al hacer clic en la criatura (vehículos, monturas, NPC de misión): cast_flags 1 = el jugador lanza, 2 = sobre el jugador; user_type 0 amigo, 1 banda, 2 grupo, 3 jugador.",
+    "VEHICLE_TEMPLATE_ACCESSORY": "Las criaturas que van en este vehículo, por asiento (minion 1: mueren con él; summontype y summontimer como TempSummonType).",
+    "VEHICLE_ACCESSORY": "Las criaturas que montan un spawn de este vehículo, por guid y asiento (vehicle_accessory): sobre los accesorios de la plantilla."
   },
   "SESSION_SQL": {
     "ADD": "A la sesión",

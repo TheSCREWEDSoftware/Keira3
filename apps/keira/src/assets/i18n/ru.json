@@ -107,7 +107,12 @@
       "SPAWN_ADDON": "Дополнение появления",
       "SMARTAI": "SmartAI",
       "TEXT": "Текст",
-      "FORMATIONS": "Формации"
+      "FORMATIONS": "Формации",
+      "CREATURE_TEMPLATE_LOCALE": "Creature Template (локализация)",
+      "CREATURE_TEXT_LOCALE": "Creature Text (локализация)",
+      "NPC_SPELLCLICK_SPELLS": "Spell click",
+      "VEHICLE_TEMPLATE_ACCESSORY": "Аксессуары транспорта",
+      "VEHICLE_ACCESSORY": "Аксессуары транспорта (спавны)"
     },
     "QUEST": {
       "TITLE": "Задания",
@@ -335,7 +340,15 @@
       "ITEMID2": "Номер предмета экипировки в левой руке из Item.dbc.",
       "ITEMID3": "Номер предмета экипировки в слоте дальнего боя из Item.dbc.",
       "FACTION": "При указании ID фракции существа используется левый столбец 'ID' в селекторе, подробнее смотрите 'faction' в вики.",
-      "IMMUNITIES": "Entry here refers to the ID in creature_immunities"
+      "IMMUNITIES": "Entry here refers to the ID in creature_immunities",
+      "FINAL_STATS": "С модификаторами (creature_classlevelstats его класса):",
+      "FINAL_HEALTH": "Здоровье",
+      "FINAL_MANA": "Мана",
+      "FINAL_ARMOR": "Броня",
+      "FINAL_DAMAGE": "Урон в ближнем бою",
+      "FINAL_ATTACK_POWER": "Сила атаки",
+      "FINAL_STATS_HELP": "Как считает ядро, без аур и сложности; урон по BaseAttackTime. Опыт × {{ xp }}.",
+      "FINAL_STATS_NONE": "нет строки creature_classlevelstats для его класса и уровней."
     },
     "TEMPLATE_ADDON": {
       "ENTRY": "Ссылка на creature_template.entry",
@@ -396,8 +409,20 @@
       "BROADCAST_TEXT_ID": "ID соответствующего текста из broadcast_text",
       "SEARCH_BROADCAST_TEXT": "Поиск по MaleText или FemaleText",
       "COPY_TO_ROW": "Скопировать в выбранную строку",
-      "MATCHED_ROW": "Строка, найденная по вашему запросу"
-    }
+      "MATCHED_ROW": "Строка, найденная по вашему запросу",
+      "COMMENT_FROM_CREATURE": "Использовать имя существа",
+      "TEXT_FROM_BROADCAST_TEXT": "Прочитать текст по BroadcastTextId (MaleText или FemaleText)",
+      "NO_BROADCAST_TEXT_ID": "Сначала укажите BroadcastTextId.",
+      "BROADCAST_TEXT_NOT_FOUND": "Нет broadcast_text с этим ID (или в нём нет текста).",
+      "BROADCAST_TEXT_UNREADABLE": "Не удалось прочитать broadcast_text (ошибка в консоли)."
+    },
+    "FORMATION_LEADER": "Строй лидера (guid спавна)",
+    "FORMATION_LEADS": "{{guid}}: ведёт {{count}} (карта {{map}})",
+    "FORMATION_LED_BY": "{{guid}}: лидер спавна {{member}}",
+    "FORMATION_NONE": "{{guid}}: строя пока нет (карта {{map}})",
+    "FORMATION_NO_SPAWNS": "У этого существа нет спавнов: строй состоит из спавнов (guid в creature).",
+    "FORMATION_HELP": "creature_formations задаётся для спавнов: строки — это члены строя лидера (строка самого лидера содержит его guid как члена).",
+    "FORMATION_UNSAVED": "Выполните или отмените изменения, чтобы выбрать другого лидера."
   },
   "QUEST": {
     "TEMPLATE": {
@@ -1447,6 +1472,11 @@
   "QUERY_OUTPUT": {
     "COPIED": "Скопировано.",
     "NOT_COPIED": "Ошибка: не скопировано (изменения сохранены)."
+  },
+  "EDITORS_HELP": {
+    "NPC_SPELLCLICK_SPELLS": "Заклинания при клике игрока по существу (транспорт, маунты, NPC заданий): cast_flags 1 = кастует игрок, 2 = на игрока; user_type 0 друг, 1 рейд, 2 группа, 3 игрок.",
+    "VEHICLE_TEMPLATE_ACCESSORY": "Существа на местах этого транспорта (minion 1: умирают вместе с ним; summontype и summontimer — TempSummonType).",
+    "VEHICLE_ACCESSORY": "Существа, едущие на одном спавне этого транспорта, по guid и месту (vehicle_accessory): поверх аксессуаров шаблона."
   },
   "SESSION_SQL": {
     "ADD": "В сессию",

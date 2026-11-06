@@ -107,7 +107,12 @@
       "SPAWN_ADDON": "Spawn Addon",
       "SMARTAI": "SmartAI",
       "TEXT": "Text",
-      "FORMATIONS": "Formations"
+      "FORMATIONS": "Formations",
+      "CREATURE_TEMPLATE_LOCALE": "Creature Template Locale",
+      "CREATURE_TEXT_LOCALE": "Creature Text Locale",
+      "NPC_SPELLCLICK_SPELLS": "Spell click",
+      "VEHICLE_TEMPLATE_ACCESSORY": "Vehicle accessories",
+      "VEHICLE_ACCESSORY": "Vehicle accessories (spawns)"
     },
     "QUEST": {
       "TITLE": "Quest",
@@ -335,7 +340,15 @@
       "ITEMID2": "This is the item number of the equipment used in the left hand from Item.dbc.",
       "ITEMID3": "This is the item number of the equipment used in the ranged slot from Item.dbc.",
       "FACTION": "When refering to the Creature's Faction ID it's the column on the left 'ID' in the selector, more information check 'faction' in the wiki.",
-      "IMMUNITIES": "Entry here refers to the ID in creature_immunities"
+      "IMMUNITIES": "Entry here refers to the ID in creature_immunities",
+      "FINAL_STATS": "With the modifiers (creature_classlevelstats of its class):",
+      "FINAL_HEALTH": "Health",
+      "FINAL_MANA": "Mana",
+      "FINAL_ARMOR": "Armor",
+      "FINAL_DAMAGE": "Melee damage",
+      "FINAL_ATTACK_POWER": "Attack power",
+      "FINAL_STATS_HELP": "As the core computes them, before auras and difficulty; damage by BaseAttackTime. Experience × {{ xp }}.",
+      "FINAL_STATS_NONE": "no creature_classlevelstats row for its class and levels."
     },
     "TEMPLATE_ADDON": {
       "ENTRY": "Link to creature_template.entry",
@@ -396,8 +409,20 @@
       "BROADCAST_TEXT_ID": "Id of the equivalent text found in broadcast_text",
       "SEARCH_BROADCAST_TEXT": "Search MaleText or FemaleText",
       "COPY_TO_ROW": "Copy to Selected Row",
-      "MATCHED_ROW": "The row your search matched"
-    }
+      "MATCHED_ROW": "The row your search matched",
+      "COMMENT_FROM_CREATURE": "Use the creature's name",
+      "TEXT_FROM_BROADCAST_TEXT": "Read the text from the BroadcastTextId (MaleText, or FemaleText)",
+      "NO_BROADCAST_TEXT_ID": "Set a BroadcastTextId first.",
+      "BROADCAST_TEXT_NOT_FOUND": "No broadcast_text with this ID (or it has no text).",
+      "BROADCAST_TEXT_UNREADABLE": "The broadcast_text could not be read (see the error in the console)."
+    },
+    "FORMATION_LEADER": "Formation of the leader (spawn guid)",
+    "FORMATION_LEADS": "{{guid}}: leads {{count}} (map {{map}})",
+    "FORMATION_LED_BY": "{{guid}}: leader of spawn {{member}}",
+    "FORMATION_NONE": "{{guid}}: no formation yet (map {{map}})",
+    "FORMATION_NO_SPAWNS": "This creature has no spawns: a formation is made of spawns (creature guids).",
+    "FORMATION_HELP": "creature_formations is per spawn: its rows are the leader's members (the leader's own row has its guid as member).",
+    "FORMATION_UNSAVED": "Execute or discard the changes to pick another leader."
   },
   "QUEST": {
     "TEMPLATE": {
@@ -1447,6 +1472,11 @@
   "QUERY_OUTPUT": {
     "COPIED": "Copied.",
     "NOT_COPIED": "It failed: not copied (your changes are kept)."
+  },
+  "EDITORS_HELP": {
+    "NPC_SPELLCLICK_SPELLS": "The spells cast when a player clicks the creature (vehicles, mounts, quest NPCs): cast_flags 1 = the player casts, 2 = cast on the player; user_type 0 friend, 1 raid, 2 party, 3 player.",
+    "VEHICLE_TEMPLATE_ACCESSORY": "The creatures riding this vehicle, by seat (minion 1: they die with it; summontype and summontimer as TempSummonType).",
+    "VEHICLE_ACCESSORY": "The creatures riding one spawn of this vehicle, by guid and seat (vehicle_accessory): over the template's accessories."
   },
   "SESSION_SQL": {
     "ADD": "To the session",

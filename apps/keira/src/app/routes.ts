@@ -5,6 +5,7 @@ import { SettingsComponent } from '@keira/features/settings';
 
 import { ConditionsComponent, ConditionsHandlerService, SelectConditionsComponent } from '@keira/features/conditions';
 import {
+  CreatureCopyComponent,
   CreatureEquipTemplateComponent,
   CreatureFormationsComponent,
   CreatureHandlerService,
@@ -26,6 +27,11 @@ import {
   SaiCreatureComponent,
   SelectCreatureComponent,
   SkinningLootTemplateComponent,
+  CreatureTemplateLocaleComponent,
+  CreatureTextLocaleComponent,
+  NpcSpellclickSpellsComponent,
+  VehicleTemplateAccessoryComponent,
+  VehicleAccessoryComponent,
 } from '@keira/features/creature';
 import {
   GameobjectHandlerService,
@@ -118,8 +124,38 @@ export const KEIRA_ROUTES: Routes = [
     path: 'creature',
     children: [
       {
+        path: 'vehicle-template-accessory',
+        component: VehicleTemplateAccessoryComponent,
+        canActivate: [CreatureHandlerService],
+      },
+      {
+        path: 'vehicle-accessory',
+        component: VehicleAccessoryComponent,
+        canActivate: [CreatureHandlerService],
+      },
+      {
+        path: 'npc-spellclick-spells',
+        component: NpcSpellclickSpellsComponent,
+        canActivate: [CreatureHandlerService],
+      },
+      {
+        path: 'creature-text-locale',
+        component: CreatureTextLocaleComponent,
+        canActivate: [CreatureHandlerService],
+      },
+      {
+        path: 'creature-template-locale',
+        component: CreatureTemplateLocaleComponent,
+        canActivate: [CreatureHandlerService],
+      },
+      {
         path: 'select',
         component: SelectCreatureComponent,
+      },
+      {
+        path: 'copy',
+        component: CreatureCopyComponent,
+        canActivate: [CreatureHandlerService],
       },
       {
         path: 'creature-template',
