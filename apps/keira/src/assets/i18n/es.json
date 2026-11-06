@@ -221,7 +221,14 @@
       "SAI_WAYPOINTS": "Puntos de ruta SmartAI"
     },
     "POOLS": {
-      "TITLE": "Pools"
+      "TITLE": "Pools",
+      "SELECT": "Buscar pool",
+      "POOL_TEMPLATE": "Pool",
+      "POOL_CREATURE": "Criaturas",
+      "POOL_GAMEOBJECT": "Objetos",
+      "POOL_POOL": "Pools hijos",
+      "POOL_QUEST": "Misiones",
+      "GAME_EVENT_POOL": "Evento"
     },
     "SCRIPTS": {
       "TITLE": "Scripts"
@@ -1434,6 +1441,26 @@
     "COL_USED": "Usado por waypoints"
   },
   "POOLS": {
+    "SELECT": "Selecciona un pool existente",
+    "MAX_LIMIT_TOOLTIP": "Cuántos de sus miembros aparecen a la vez. 0 no genera ninguno. Las probabilidades solo se usan cuando es 1.",
+    "CONTENTS": "Qué contiene el pool",
+    "CREATURES": "Criaturas",
+    "GAMEOBJECTS": "Objetos",
+    "CHILD_POOLS": "Pools hijos",
+    "QUESTS": "Misiones",
+    "MOTHER_POOL": "Dentro del pool",
+    "NONE": "ninguno",
+    "EVENT": "Evento",
+    "SHOW_IN_3D": "Ver en el editor de mundo",
+    "MAX_LIMIT_IS": "max_limit del pool: {{max}}",
+    "CHANCE_TOOLTIP": "La probabilidad (%) de que sea el que aparece, cuando el pool genera uno a la vez (max_limit 1). 0: una parte igual de lo que queda.",
+    "NO_SPAWN": "No existe",
+    "POOL_NAME": "Pool",
+    "OPEN": "Abrir",
+    "QUEST_NAME": "Misión",
+    "EVENT_TOOLTIP": "El evento (game_event.eventEntry) durante el que aparece el pool. Negativo: el pool se quita durante él.",
+    "EVENT_NAME": "Evento",
+    "REMOVED_DURING": "se quita durante él",
     "PROBLEM_EMPTY": "El pool está vacío: el servidor no lo generará.",
     "PROBLEM_MIXED": "Criaturas, objetos y pools hijos se generan por separado, cada uno hasta max_limit.",
     "PROBLEM_QUEST_IN_MOTHER": "Los pools de misiones no pueden estar en un pool madre (este está en el pool {{mother}}): sus misiones se ignoran.",

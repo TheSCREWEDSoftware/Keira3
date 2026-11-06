@@ -221,7 +221,14 @@
       "SAI_WAYPOINTS": "SmartAI path points"
     },
     "POOLS": {
-      "TITLE": "Pools"
+      "TITLE": "Pools",
+      "SELECT": "Search pool",
+      "POOL_TEMPLATE": "Pool",
+      "POOL_CREATURE": "Creatures",
+      "POOL_GAMEOBJECT": "Gameobjects",
+      "POOL_POOL": "Child pools",
+      "POOL_QUEST": "Quests",
+      "GAME_EVENT_POOL": "Game event"
     },
     "SCRIPTS": {
       "TITLE": "Scripts"
@@ -1434,6 +1441,26 @@
     "COL_USED": "Used by waypoints"
   },
   "POOLS": {
+    "SELECT": "Select an existing pool",
+    "MAX_LIMIT_TOOLTIP": "How many of its members are up at once. 0 spawns none of them. Chances are only used when it is 1.",
+    "CONTENTS": "What the pool holds",
+    "CREATURES": "Creatures",
+    "GAMEOBJECTS": "Gameobjects",
+    "CHILD_POOLS": "Child pools",
+    "QUESTS": "Quests",
+    "MOTHER_POOL": "In the pool",
+    "NONE": "none",
+    "EVENT": "Game event",
+    "SHOW_IN_3D": "Show in the World Editor",
+    "MAX_LIMIT_IS": "The pool's max_limit: {{max}}",
+    "CHANCE_TOOLTIP": "The chance (%) it is the one spawned, when the pool spawns one at a time (max_limit 1). 0: an equal share of what's left.",
+    "NO_SPAWN": "No such spawn",
+    "POOL_NAME": "Pool",
+    "OPEN": "Open",
+    "QUEST_NAME": "Quest",
+    "EVENT_TOOLTIP": "The game event (game_event.eventEntry) the pool spawns during. Negative: the pool is removed during it.",
+    "EVENT_NAME": "Event",
+    "REMOVED_DURING": "removed during it",
     "PROBLEM_EMPTY": "The pool holds nothing: the world server won't spawn it.",
     "PROBLEM_MIXED": "Creatures, gameobjects and child pools are spawned separately, each up to max_limit.",
     "PROBLEM_QUEST_IN_MOTHER": "Quest pools can't be in a mother pool (this one is in pool {{mother}}): its quests are skipped.",

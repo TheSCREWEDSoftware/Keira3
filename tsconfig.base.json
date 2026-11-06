@@ -86,6 +86,9 @@
       "@keira/features/waypoints": [
         "libs/features/waypoints/src/index.ts"
       ],
+      "@keira/features/pools": [
+        "libs/features/pools/src/index.ts"
+      ],
       "@keira/main/connection-window": [
         "libs/main/connection-window/src/index.ts"
       ],

@@ -221,7 +221,14 @@
       "SAI_WAYPOINTS": "SmartAI 路径点"
     },
     "POOLS": {
-      "TITLE": "刷新池"
+      "TITLE": "刷新池",
+      "SELECT": "搜索刷新池",
+      "POOL_TEMPLATE": "刷新池",
+      "POOL_CREATURE": "生物",
+      "POOL_GAMEOBJECT": "游戏对象",
+      "POOL_POOL": "子刷新池",
+      "POOL_QUEST": "任务",
+      "GAME_EVENT_POOL": "游戏事件"
     },
     "SCRIPTS": {
       "TITLE": "脚本"
@@ -1434,6 +1441,26 @@
     "COL_USED": "被路点使用"
   },
   "POOLS": {
+    "SELECT": "选择已有的刷新池",
+    "MAX_LIMIT_TOOLTIP": "同时出现的成员数量。0 表示一个都不刷新。只有为 1 时才使用几率。",
+    "CONTENTS": "刷新池的内容",
+    "CREATURES": "生物",
+    "GAMEOBJECTS": "游戏对象",
+    "CHILD_POOLS": "子刷新池",
+    "QUESTS": "任务",
+    "MOTHER_POOL": "所属刷新池",
+    "NONE": "无",
+    "EVENT": "游戏事件",
+    "SHOW_IN_3D": "在世界编辑器中显示",
+    "MAX_LIMIT_IS": "刷新池的 max_limit：{{max}}",
+    "CHANCE_TOOLTIP": "当刷新池一次只刷一个（max_limit 1）时，刷出它的几率（%）。0：平分剩余几率。",
+    "NO_SPAWN": "没有该刷新点",
+    "POOL_NAME": "刷新池",
+    "OPEN": "打开",
+    "QUEST_NAME": "任务",
+    "EVENT_TOOLTIP": "刷新池出现期间的游戏事件（game_event.eventEntry）。负数：事件期间移除刷新池。",
+    "EVENT_NAME": "事件",
+    "REMOVED_DURING": "事件期间移除",
     "PROBLEM_EMPTY": "刷新池为空：服务器不会刷出它。",
     "PROBLEM_MIXED": "生物、游戏对象和子刷新池分别刷新，各自最多 max_limit 个。",
     "PROBLEM_QUEST_IN_MOTHER": "任务刷新池不能属于母刷新池（此池属于 {{mother}}）：其任务被跳过。",
