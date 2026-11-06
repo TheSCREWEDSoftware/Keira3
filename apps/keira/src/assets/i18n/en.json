@@ -178,7 +178,8 @@
     "CONDITIONS": {
       "TITLE": "Conditions",
       "SELECT_CONDITIONS": "Select Conditions",
-      "CONDITIONS": "Conditions"
+      "CONDITIONS": "Conditions",
+      "SOURCE": "Conditions of the source"
     },
     "SMARTAI": {
       "TITLE": "SmartAI",
@@ -854,7 +855,15 @@
         "CONDITION_OBJECT_ENTRY_GUID": "0 = Any object of given type;  1 - 500k = creature/gameobject GUID",
         "CONDITION_DISTANCE_TO": "ComparisionType: 0 = distance must be equal to ConditionValue2; 1 = distance must be higher than ConditionValue2; 2 = distance must be lower than ConditionValue2; 3 = distance must be equal to or higher than ConditionValue2; 4 = distance must be equal to or lower than ConditionValue2",
         "CONDITION_QUEST_OBJECTIVE_PROGRESS": "Quest Objective Count"
-      }
+      },
+      "GENERATE_COMMENT": "Generate",
+      "GENERATE_COMMENT_TIP": "Fill the comment from the fields above, as SmartAI comments are"
+    },
+    "SOURCE": {
+      "HELP": "Every condition of this source: pick one in the table to change it below, add, copy or delete. Saving writes the whole source again.",
+      "NOT_UNIQUE": "Another condition of this source has these ElseGroup, type, target and values.",
+      "OPEN": "All the conditions of the source",
+      "OPEN_TIP": "The conditions of this source (or the ones searched), all together"
     }
   },
   "SMARTAI": {

@@ -178,7 +178,8 @@
     "CONDITIONS": {
       "TITLE": "Condiciones",
       "SELECT_CONDITIONS": "Seleccionar Condiciones",
-      "CONDITIONS": "Condiciones"
+      "CONDITIONS": "Condiciones",
+      "SOURCE": "Condiciones de la fuente"
     },
     "SMARTAI": {
       "TITLE": "SmartAI",
@@ -854,7 +855,15 @@
         "CONDITION_OBJECT_ENTRY_GUID": "0 = Cualquier objeto del tipo dado;  1 - 500k = criatura/objeto del juego GUID",
         "CONDITION_DISTANCE_TO": "ComparisionType: 0 = la distancia debe ser igual a ConditionValue2; 1 = la distancia debe ser superior a ConditionValue2; 2 = la distancia debe ser inferior a ConditionValue2; 3 = la distancia debe ser igual o superior a ConditionValue2; 4 = la distancia debe ser igual o inferior a ConditionValue2",
         "CONDITION_QUEST_OBJECTIVE_PROGRESS": "Recuento de Objetivos de Misión"
-      }
+      },
+      "GENERATE_COMMENT": "Generar",
+      "GENERATE_COMMENT_TIP": "Rellena el comentario a partir de los campos de arriba, como los comentarios de SmartAI"
+    },
+    "SOURCE": {
+      "HELP": "Todas las condiciones de esta fuente: elige una en la tabla para cambiarla abajo, añade, copia o borra. Al guardar se escribe de nuevo toda la fuente.",
+      "NOT_UNIQUE": "Otra condición de esta fuente tiene el mismo ElseGroup, tipo, objetivo y valores.",
+      "OPEN": "Todas las condiciones de la fuente",
+      "OPEN_TIP": "Las condiciones de esta fuente (o las buscadas), todas juntas"
     }
   },
   "SMARTAI": {

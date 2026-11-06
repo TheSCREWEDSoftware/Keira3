@@ -3,7 +3,13 @@ import { Routes } from '@angular/router';
 import { DashboardComponent } from '@keira/features/dashboard';
 import { SettingsComponent } from '@keira/features/settings';
 
-import { ConditionsComponent, ConditionsHandlerService, SelectConditionsComponent } from '@keira/features/conditions';
+import {
+  ConditionsComponent,
+  ConditionsHandlerService,
+  ConditionsSourceComponent,
+  ConditionsSourceHandlerService,
+  SelectConditionsComponent,
+} from '@keira/features/conditions';
 import {
   CreatureEquipTemplateComponent,
   CreatureFormationsComponent,
@@ -479,6 +485,11 @@ export const KEIRA_ROUTES: Routes = [
         path: 'conditions',
         component: ConditionsComponent,
         canActivate: [ConditionsHandlerService],
+      },
+      {
+        path: 'source',
+        component: ConditionsSourceComponent,
+        canActivate: [ConditionsSourceHandlerService],
       },
     ],
   },
